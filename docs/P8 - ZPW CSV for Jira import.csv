@@ -1,0 +1,658 @@
+"Issue Type","Epic Name","Summary","Description","Labels","Epic Link"
+"EPIC","Unified Person & Employee Identity","Unified Person & Employee Identity","We have a clean, multi-tenant-safe model for people and employees that can be shared across Zimasa products without data leakage.
+
+Requirements: PW-CORE-01, PW-CORE-02, PW-CORE-03, PW-CORE-04","PeopleCore",""
+"EPIC","Manage Employment Lifecycle","Manage Employment Lifecycle","HR can manage contracts and employment status changes over time, and report on joiners, leavers and movements.
+
+Requirements: PW-CORE-05, PW-CORE-06, PW-CORE-07, PW-CORE-08","PeopleCore",""
+"EPIC","Enrich Employee Context","Enrich Employee Context","Managers and HR can view key context about dependents, education and prior experience to support decisions and performance conversations.
+
+Requirements: PW-CORE-09, PW-CORE-10, PW-CORE-11, PW-CORE-12, PW-CORE-13","PeopleCore",""
+"EPIC","Wellness Engagement Profile","Wellness Engagement Profile","Each employee has a wellness engagement profile that can drive personalised, non-punitive wellness nudges and AI insights.
+
+Requirements: PW-CORE-14, PW-CORE-15, PW-CORE-16","PeopleCore",""
+"EPIC","Design Org Structure & Hierarchy","Design Org Structure & Hierarchy","HR can model the company structure with departments, teams and cost centres in a flexible hierarchy across multiple entities.
+
+Requirements: PW-ORG-01, PW-ORG-02","WorkLattice",""
+"EPIC","Define Job Roles & Requirements","Define Job Roles & Requirements","The organisation can standardise role definitions and attach simple requirements that drive performance templates and development planning.
+
+Requirements: PW-ORG-03, PW-ORG-04, PW-ORG-09, PW-ORG-10","WorkLattice",""
+"EPIC","Manage Positions & Reporting Lines","Manage Positions & Reporting Lines","HR can model concrete positions and reporting lines, including simple matrix reporting where needed.
+
+Requirements: PW-ORG-05, PW-ORG-06","WorkLattice",""
+"EPIC","Manage Position Assignments & Movements","Manage Position Assignments & Movements","The organisation can track who sits in which role over time, with clear history of transfers, promotions and secondments.
+
+Requirements: PW-ORG-07, PW-ORG-08","WorkLattice",""
+"EPIC","Configurable Leave Types & Policies","Configurable Leave Types & Policies","HR can configure leave types and simple policies that reflect the organisation’s rules, including wellness and mental health leave.
+
+Requirements: PW-LEAVE-01, PW-LEAVE-02, PW-LEAVE-03","Leave",""
+"EPIC","Leave Periods & Balance Accounting","Leave Periods & Balance Accounting","Leave balances are correctly tracked per period and type, with clean rollover and adjustment mechanisms.
+
+Requirements: PW-LEAVE-04, PW-LEAVE-05, PW-LEAVE-06, PW-LEAVE-07, PW-LEAVE-08","Leave",""
+"EPIC","Employees Manage Their Own Leave","Employees Manage Their Own Leave","Employees can easily request leave, see their balances and avoid basic errors like overlapping or over-drawn leave.
+
+Requirements: PW-LEAVE-09, PW-LEAVE-10, PW-LEAVE-11","Leave",""
+"EPIC","Flexible Leave Approval Workflows","Flexible Leave Approval Workflows","Managers and HR can approve leave using simple, configurable workflows that handle special cases like wellness leave.
+
+Requirements: PW-LEAVE-12, PW-LEAVE-13","Leave",""
+"EPIC","Team Calendars & Capacity Protection","Team Calendars & Capacity Protection","Managers can see who is off when and protect minimum staffing levels with simple roster rules.
+
+Requirements: PW-LEAVE-14, PW-LEAVE-15, PW-LEAVE-16, PW-LEAVE-17, PW-LEAVE-18","Leave",""
+"EPIC","Recovery Index for Rest & Recharge","Recovery Index for Rest & Recharge","Employees, managers and HR can see a Recovery Index that highlights whether people are taking healthy breaks.
+
+Requirements: PW-LEAVE-19, PW-LEAVE-20, PW-LEAVE-21, PW-LEAVE-22","Leave",""
+"EPIC","Leave-Based Wellness Signals to ZHEP","Leave-Based Wellness Signals to ZHEP","ZHEP receives anonymised leave patterns (under-use, over-use, no-break) to drive broader wellness interventions.
+
+Requirements: PW-LEAVE-23, PW-LEAVE-24","Leave",""
+"EPIC","Configure Performance Cycles & Templates","Configure Performance Cycles & Templates","HR can set up performance cycles and templates that reflect how the organisation actually appraises people.
+
+Requirements: PW-PERF-01, PW-PERF-02, PW-PERF-03, PW-PERF-04, PW-PERF-05, PW-PERF-19","Performance",""
+"EPIC","Capture Rich Performance Feedback & Goals","Capture Rich Performance Feedback & Goals","Employees and managers can capture structured and narrative feedback, KPIs and OKRs within a single, coherent appraisal.
+
+Requirements: PW-PERF-06, PW-PERF-07, PW-PERF-08, PW-PERF-09, PW-PERF-10, PW-PERF-11, PW-PERF-12, PW-PERF-13","Performance",""
+"EPIC","Run Appraisal Workflow & Scoring","Run Appraisal Workflow & Scoring","The organisation can run structured appraisal cycles with clear workflow, finalisation and fair scoring.
+
+Requirements: PW-PERF-14, PW-PERF-15, PW-PERF-16, PW-PERF-17, PW-PERF-18","Performance",""
+"EPIC","Growth & Wellness Commitments","Growth & Wellness Commitments","Each appraisal ends with concrete, trackable growth and wellness commitments that can feed into ZHEP.
+
+Requirements: PW-PERF-20, PW-PERF-21","Performance",""
+"EPIC","Continuous Check-ins & Wellbeing Signals","Continuous Check-ins & Wellbeing Signals","Managers and employees can run regular check-ins that capture energy/stress signals and feed into insights without becoming punitive.
+
+Requirements: PW-PERF-22, PW-PERF-23, PW-PERF-24","Performance",""
+"EPIC","Points & Levels for Healthy Habits","Points & Levels for Healthy Habits","Employees earn and see points and levels for healthy, sustainable behaviours without creating unhealthy competition.
+
+Requirements: PW-GAME-01, PW-GAME-02, PW-GAME-03, PW-GAME-04, PW-GAME-05","Gamification",""
+"EPIC","Team Wellness Challenges","Team Wellness Challenges","Teams can join simple wellness-focused challenges that encourage balanced leave and check-ins without ranking individuals.
+
+Requirements: PW-GAME-06, PW-GAME-07, PW-GAME-08","Gamification",""
+"EPIC","Manager Health Stewardship Scorecards","Manager Health Stewardship Scorecards","Managers get a private, non-punitive view of how well they support rest and wellbeing in their teams.
+
+Requirements: PW-GAME-09, PW-GAME-10","Gamification",""
+"EPIC","Wellness Visuals & Micro-Rewards","Wellness Visuals & Micro-Rewards","Employees see simple, positive visual feedback and badges that reinforce good recovery and reflection habits.
+
+Requirements: PW-GAME-11, PW-GAME-12","Gamification",""
+"EPIC","Employee Copilot for HR & Wellness Questions","Employee Copilot for HR & Wellness Questions","Employees can get instant, conversational answers about HR policies, leave and wellness options, and have simple actions drafted for them.
+
+Requirements: PW-AI-01, PW-AI-02","AI",""
+"EPIC","Manager Insight Copilot","Manager Insight Copilot","Managers can ask natural-language questions and get summarised insights and nudges about team wellbeing and performance patterns.
+
+Requirements: PW-AI-03, PW-AI-04","AI",""
+"EPIC","Performance Summaries & Coaching Assistance","Performance Summaries & Coaching Assistance","Managers get AI help to summarise appraisals and phrase feedback constructively, while keeping humans firmly in control.
+
+Requirements: PW-AI-05, PW-AI-06, PW-AI-07, PW-AI-08, PW-AI-09","AI",""
+"EPIC","Smart HR Request Triage","Smart HR Request Triage","Generic HR queries are automatically categorised and routed, with helpful draft responses, reducing manual triage overhead.
+
+Requirements: PW-AI-10, PW-AI-11, PW-AI-12","AI",""
+"EPIC","Safe & Transparent AI Governance","Safe & Transparent AI Governance","All AI features are clearly labelled, controllable and tenant-safe, with strict boundaries around data access and usage.
+
+Requirements: PW-AI-13, PW-AI-14, PW-AI-15","AI",""
+"EPIC","Employee Self-Service Hub","Employee Self-Service Hub","Employees can self-serve for the most common HR tasks without going through HR, reducing friction and admin work.
+
+Requirements: PW-ESS-01","ESS",""
+"EPIC","Manager Self-Service Console","Manager Self-Service Console","Managers can handle day-to-day people management (leave, performance, wellbeing) from a single place, instead of relying on HR.
+
+Requirements: PW-MSS-01","MSS",""
+"EPIC","Role-Aware Navigation & Permissions in Self-Service","Role-Aware Navigation & Permissions in Self-Service","The same frontend can safely adapt to different roles and show only what each user should see.
+
+Requirements: PW-ESS-01, PW-MSS-01, PW-NFR-02, PW-NFR-03","ESS",""
+"EPIC","Self-Service Wellness Experience","Self-Service Wellness Experience","Employees and managers see wellness as part of normal self-service, with clear visibility of Recovery and gamification.
+
+Requirements: PW-ESS-01, PW-MSS-01, PW-GAME-11, PW-GAME-12, PW-LEAVE-19, PW-LEAVE-20, PW-LEAVE-21, PW-LEAVE-22","ESS",""
+"EPIC","ZHEP Wellness Integration","ZHEP Wellness Integration","PeopleWell and ZHEP share just enough data to power wellness journeys, without exposing sensitive HR or health details.
+
+Requirements: PW-INT-01, PW-INT-02, PW-LEAVE-23, PW-LEAVE-24, PW-PERF-21","Platform",""
+"EPIC","External Integrations & Open APIs","External Integrations & Open APIs","PeopleWell plugs cleanly into payroll, BI and other systems via stable APIs and exports, without becoming a payroll engine itself.
+
+Requirements: PW-INT-03, PW-INT-04, PW-NFR-06, PW-NFR-07, PW-NFR-12, PW-NFR-13","Platform",""
+"EPIC","Strong Multi-Tenancy & Isolation","Strong Multi-Tenancy & Isolation","Multiple customers can safely share the platform without any risk of cross-tenant data leakage or AI cross-contamination.
+
+Requirements: PW-NFR-01, PW-CORE-03, PW-CORE-04, PW-AI-14, PW-AI-15","Platform",""
+"EPIC","Security, RBAC & Auditability","Security, RBAC & Auditability","Access is controlled by roles and org scope, and sensitive changes are always auditable.
+
+Requirements: PW-NFR-02, PW-NFR-03, PW-NFR-04, PW-NFR-05","Platform",""
+"EPIC","Configurability & Simple Workflow Engine","Configurability & Simple Workflow Engine","Tenants can adapt PeopleWell to their HR patterns without heavy workflow tooling.
+
+Requirements: PW-NFR-08, PW-NFR-09, PW-LEAVE-12, PW-LEAVE-13, PW-PERF-15","Platform",""
+"EPIC","Onboarding at Speed (Imports & Setup)","Onboarding at Speed (Imports & Setup)","New tenants can be onboarded quickly using import templates and clear validation so they can see value fast.
+
+Requirements: PW-NFR-10, PW-NFR-11","Platform",""
+"EPIC","Insightful Reporting & Analytics Foundations","Insightful Reporting & Analytics Foundations","HR and leadership get the essential views on people, leave, wellbeing, performance and gamification to run the business.
+
+Requirements: PW-NFR-12, PW-NFR-13, PW-LEAVE-21, PW-LEAVE-22, PW-GAME-08, PW-GAME-10","Platform",""
+"STORY","","As an HR user, I want to create and maintain Person records so that people can be consistently identified across tenants and Zimasa products.","As an HR user, I want to create and maintain Person records so that people can be consistently identified across tenants and Zimasa products.
+
+Requirements: PW-CORE-01
+
+Acceptance Criteria:
+- Given I am an HR user, when I create a Person with mandatory demographic and at least one contact detail, then the system stores a new Person with a generated ID.
+- Given a Person exists, when I add or update multiple contact methods and mark one as primary, then the system enforces exactly one primary per contact type.
+- Given I search for a Person by name or ID, when I execute the search, then only Persons within my tenant and permission scope are returned.","PeopleCore","Unified Person & Employee Identity"
+"STORY","","As an HR user, I want to create an Employee for my tenant from an existing Person so that employment data is scoped per tenant.","As an HR user, I want to create an Employee for my tenant from an existing Person so that employment data is scoped per tenant.
+
+Requirements: PW-CORE-02, PW-CORE-03, PW-CORE-04
+
+Acceptance Criteria:
+- Given a Person exists in the directory, when I create an Employee for that Person in my tenant, then the system links the Employee to that Person and tags it with my tenant.
+- Given a Person already has an Employee record in another tenant, when I create an Employee in my tenant, then the system allows a separate Employee record without exposing the other tenant.
+- Given I am scoped to Tenant A, when I use Employee APIs or UI, then I cannot see Employee records from Tenant B.","PeopleCore","Unified Person & Employee Identity"
+"STORY","","As an HR user, I want to update an Employee’s employment status so that lifecycle changes like probation, suspension and exit are tracked.","As an HR user, I want to update an Employee’s employment status so that lifecycle changes like probation, suspension and exit are tracked.
+
+Requirements: PW-CORE-02, PW-CORE-07, PW-CORE-08
+
+Acceptance Criteria:
+- Given an Employee is Active, when I change their status to Probation or Exited with an effective date and reason, then the system records the new status and appends a status history entry.
+- Given an Employee has multiple status changes, when I view their status history, then I see a chronological list with old status, new status, effective date and reason.
+- Given I run a joiners or leavers report for a date range, when the system processes status history, then it includes Employees whose status changed to Active or Exited in that period.","PeopleCore","Unified Person & Employee Identity"
+"STORY","","As an HR user, I want to create and update employment contracts so that contractual terms and key dates are recorded over time.","As an HR user, I want to create and update employment contracts so that contractual terms and key dates are recorded over time.
+
+Requirements: PW-CORE-05, PW-CORE-06
+
+Acceptance Criteria:
+- Given an Employee exists, when I create a contract with type, start date, optional end date and probation end date, then the system stores the contract with the chosen status (Draft or Active).
+- Given a contract is ended, when I view the Employee’s contract history, then I see all contracts with type, dates and status.
+- Given a contract references a primary Position Assignment, when I save it, then the contract remains linked to that Position Assignment.","PeopleCore","Manage Employment Lifecycle"
+"STORY","","As an HR user, I want to run joiners/leavers/status change reports so that I can monitor workforce movement.","As an HR user, I want to run joiners/leavers/status change reports so that I can monitor workforce movement.
+
+Requirements: PW-CORE-07, PW-CORE-08
+
+Acceptance Criteria:
+- Given I select a date range and Joiners, when I run the report, then I see Employees whose first Active status fell within that range.
+- Given I select a date range and Leavers, when I run the report, then I see Employees whose status changed to Exited within that range.
+- Given I select Status changes for a period, when I run the report, then I see all status history entries in that range grouped by Employee.","PeopleCore","Manage Employment Lifecycle"
+"STORY","","As an HR user, I want to capture employee dependents so that I can determine basic wellness program eligibility.","As an HR user, I want to capture employee dependents so that I can determine basic wellness program eligibility.
+
+Requirements: PW-CORE-09, PW-CORE-10
+
+Acceptance Criteria:
+- Given an Employee exists, when I add a dependent with relationship, date of birth and a health cover flag, then the system saves the dependent linked to that Employee.
+- Given I view an Employee profile, when dependents exist, then I see a simple list of dependents with relationship, DOB and cover flag only.
+- Given I export wellness eligibility data, when the export runs, then it includes Employee and basic dependent fields without full benefits structures.","PeopleCore","Enrich Employee Context"
+"STORY","","As an HR user, I want to record simple education and professional qualifications so that managers have context for performance and development.","As an HR user, I want to record simple education and professional qualifications so that managers have context for performance and development.
+
+Requirements: PW-CORE-11, PW-CORE-13
+
+Acceptance Criteria:
+- Given a Person exists, when I add a qualification with type, institution, name, level and completion year, then the system stores it linked to that Person.
+- Given a Person has multiple qualifications, when I view their profile, then I see a list of qualifications sorted by completion year.
+- Given deep subject hierarchies are out of scope, when I record qualifications, then the UI only exposes simple summary fields.","PeopleCore","Enrich Employee Context"
+"STORY","","As an HR user, I want to record prior employment history so that managers can quickly understand an employee’s background.","As an HR user, I want to record prior employment history so that managers can quickly understand an employee’s background.
+
+Requirements: PW-CORE-12, PW-CORE-13
+
+Acceptance Criteria:
+- Given a Person exists, when I add prior employment with employer, role title, start date and end date, then the system stores it linked to that Person.
+- Given a Person has multiple prior employment entries, when I view them, then they are shown in chronological order with summary fields only.","PeopleCore","Enrich Employee Context"
+"STORY","","As an HR or wellness admin, I want to maintain a wellness engagement profile for each employee so that wellness nudges and AI insights can be tailored.","As an HR or wellness admin, I want to maintain a wellness engagement profile for each employee so that wellness nudges and AI insights can be tailored.
+
+Requirements: PW-CORE-14, PW-CORE-15
+
+Acceptance Criteria:
+- Given an Employee exists, when I set their consent flag, preferred channel and engagement tags, then the system stores a wellness engagement profile for that Employee.
+- Given engagement tags change over time, when I view the profile, then I see the latest tags that can be used as context by AI features.
+- Given an AI feature requests context, when the system assembles the context, then it can include non-clinical wellness profile fields for that Employee.","PeopleCore","Wellness Engagement Profile"
+"STORY","","As a compliance officer, I want wellness engagement data to be protected from punitive use so that employees can trust the system.","As a compliance officer, I want wellness engagement data to be protected from punitive use so that employees can trust the system.
+
+Requirements: PW-CORE-16
+
+Acceptance Criteria:
+- Given I am building a disciplinary report, when I select filters, then wellness engagement fields are not offered as primary filters for punitive lists.
+- Given an API consumer requests wellness engagement data, when documentation is generated or viewed, then it clearly states that the data is for engagement and coaching, not disciplinary automation.","PeopleCore","Wellness Engagement Profile"
+"STORY","","As an HR admin, I want to maintain an org unit hierarchy so that departments, teams and cost centres are clearly structured.","As an HR admin, I want to maintain an org unit hierarchy so that departments, teams and cost centres are clearly structured.
+
+Requirements: PW-ORG-01, PW-ORG-02
+
+Acceptance Criteria:
+- Given I create an Org Unit without a parent, when I save it, then it becomes a top-level Org Unit in my tenant.
+- Given I create an Org Unit with a parent, when I save it, then the system records the parent-child relationship and shows it in the tree.
+- Given Org Units have effective from and to dates, when I view the active structure for a date, then only Org Units whose effective period covers that date are shown as active.","WorkLattice","Design Org Structure & Hierarchy"
+"STORY","","As an HR user, I want to define job roles so that positions and performance templates can reference consistent role definitions.","As an HR user, I want to define job roles so that positions and performance templates can reference consistent role definitions.
+
+Requirements: PW-ORG-03, PW-ORG-04
+
+Acceptance Criteria:
+- Given I create a Job Role with name, description, family and level, when I save it, then the Job Role is available for positions and templates.
+- Given a Job Role is referenced by positions, when I update its description or job family, then all referencing positions remain linked to the updated role.","WorkLattice","Define Job Roles & Requirements"
+"STORY","","As an HR user, I want to capture simple job requirements for each role so that performance and development have clear context.","As an HR user, I want to capture simple job requirements for each role so that performance and development have clear context.
+
+Requirements: PW-ORG-09, PW-ORG-10
+
+Acceptance Criteria:
+- Given a Job Role exists, when I enter minimum qualification level, desired years of experience and key skills tags, then the system stores these as job requirements.
+- Given job requirements exist, when a manager views an employee’s profile or appraisal, then the requirements are displayed as read-only context without being used for ATS-style matching.","WorkLattice","Define Job Roles & Requirements"
+"STORY","","As an HR admin, I want to maintain positions linked to org units and job roles so that the structure of seats in the organisation is clear.","As an HR admin, I want to maintain positions linked to org units and job roles so that the structure of seats in the organisation is clear.
+
+Requirements: PW-ORG-05
+
+Acceptance Criteria:
+- Given an Org Unit and Job Role exist, when I create a Position with code and title and link it to them, then the Position is saved and appears under that Org Unit.
+- Given Positions exist across Org Units, when I view the org chart, then positions are shown nested under their respective Org Units.","WorkLattice","Manage Positions & Reporting Lines"
+"STORY","","As an HR admin, I want to configure primary and optional secondary reporting lines so that matrix structures are supported.","As an HR admin, I want to configure primary and optional secondary reporting lines so that matrix structures are supported.
+
+Requirements: PW-ORG-06
+
+Acceptance Criteria:
+- Given two Positions exist, when I set Position A’s primary reports-to as Position B, then the system enforces that only one primary reporting line exists for Position A.
+- Given a primary reporting line is set, when I add a secondary reports-to Position, then the secondary relationship is stored without affecting the primary.
+- Given a manager views their team, when the system builds the hierarchy, then it uses primary reporting lines to determine direct reports.","WorkLattice","Manage Positions & Reporting Lines"
+"STORY","","As an HR user, I want to assign an employee to a position so that we can track who occupies which seat at any given time.","As an HR user, I want to assign an employee to a position so that we can track who occupies which seat at any given time.
+
+Requirements: PW-ORG-07
+
+Acceptance Criteria:
+- Given an Employee and Position exist, when I create a primary Position Assignment with a start date, then the system records it as the current primary assignment if no overlapping primary exists.
+- Given an Employee already has a primary assignment for a period, when I attempt to create another overlapping primary assignment, then the system prevents the overlap or requires closing the previous assignment according to configuration.","WorkLattice","Manage Position Assignments & Movements"
+"STORY","","As an HR user, I want to track assignment history so that transfers, promotions and secondments are visible over time.","As an HR user, I want to track assignment history so that transfers, promotions and secondments are visible over time.
+
+Requirements: PW-ORG-08
+
+Acceptance Criteria:
+- Given an Employee has multiple Position Assignments over time, when I view their assignment history, then I see each assignment with position, org unit, primary/secondary flag, start date and end date.
+- Given a manager views their current team, when the system calculates team membership, then only assignments active on today’s date are included.","WorkLattice","Manage Position Assignments & Movements"
+"STORY","","As an HR admin, I want to configure leave types so that our leave policies, including wellness leave, are correctly represented.","As an HR admin, I want to configure leave types so that our leave policies, including wellness leave, are correctly represented.
+
+Requirements: PW-LEAVE-01, PW-LEAVE-02
+
+Acceptance Criteria:
+- Given I am in leave settings, when I create a Leave Type with name, category, is-paid flag, attachment requirement and wellness flag, then the Leave Type is saved for the tenant.
+- Given default leave types exist, when I review them, then I can edit their attributes to match our policies.","Leave","Configurable Leave Types & Policies"
+"STORY","","As an HR admin, I want to configure leave accrual and caps per type so that balances are computed accurately.","As an HR admin, I want to configure leave accrual and caps per type so that balances are computed accurately.
+
+Requirements: PW-LEAVE-02, PW-LEAVE-03
+
+Acceptance Criteria:
+- Given a Leave Type exists, when I set its accrual model, days per period, max annual entitlement, carry-forward rules and pro-rata rules, then the policy is stored for that type.
+- Given accrual is configured, when an accrual job runs, then the system increases eligible employees’ balances according to the policy.","Leave","Configurable Leave Types & Policies"
+"STORY","","As an HR admin, I want to define the active leave period so that balances are tracked within the correct year or fiscal cycle.","As an HR admin, I want to define the active leave period so that balances are tracked within the correct year or fiscal cycle.
+
+Requirements: PW-LEAVE-04, PW-LEAVE-05
+
+Acceptance Criteria:
+- Given I choose a period type and set start and end dates, when I activate the Leave Period, then it becomes the default for balance calculations.
+- Given the Leave Period ends, when I trigger rollover, then the system creates a new period and applies carry-forward rules to balances.","Leave","Leave Periods & Balance Accounting"
+"STORY","","As an HR or system admin, I want the system to maintain leave balances per employee so that usage and accruals are transparent.","As an HR or system admin, I want the system to maintain leave balances per employee so that usage and accruals are transparent.
+
+Requirements: PW-LEAVE-06, PW-LEAVE-07, PW-LEAVE-08
+
+Acceptance Criteria:
+- Given leave policies and an active Leave Period, when the system runs accrual, then it computes opening, accrued and closing balances by employee, type and period.
+- Given a leave request is approved, when it is posted to balances, then the approved days are deducted from the appropriate balance.
+- Given I perform a manual balance adjustment, when I save it, then the system updates the balance and logs an auditable adjustment record.","Leave","Leave Periods & Balance Accounting"
+"STORY","","As an employee, I want to submit leave requests with visibility of my balance so that I avoid requesting more leave than I have.","As an employee, I want to submit leave requests with visibility of my balance so that I avoid requesting more leave than I have.
+
+Requirements: PW-LEAVE-09, PW-LEAVE-10, PW-LEAVE-11
+
+Acceptance Criteria:
+- Given I open the leave request form, when I select a leave type, then my current available balance for that type is displayed.
+- Given I enter start and end dates, when I submit the request, then the system validates overlaps, balance sufficiency and leave period boundaries.
+- Given the requested duration exceeds my available balance, when I submit, then the system shows a clear warning or blocks submission according to configuration.","Leave","Employees Manage Their Own Leave"
+"STORY","","As a manager, I want to approve or decline leave requests so that I can manage my team’s time off.","As a manager, I want to approve or decline leave requests so that I can manage my team’s time off.
+
+Requirements: PW-LEAVE-12
+
+Acceptance Criteria:
+- Given I have direct reports, when they submit leave requests, then those requests appear in my approval queue.
+- Given a leave request is pending my approval, when I approve it, then the system marks it as approved and updates balances and notifications as configured.
+- Given a leave request is pending, when I decline it with a reason, then the system records the rejection and notifies the employee.","Leave","Flexible Leave Approval Workflows"
+"STORY","","As an HR admin, I want to configure leave approval levels so that sensitive leave types are routed correctly.","As an HR admin, I want to configure leave approval levels so that sensitive leave types are routed correctly.
+
+Requirements: PW-LEAVE-13
+
+Acceptance Criteria:
+- Given I configure a leave type with two-level approval (manager then HR), when an employee submits that type, then the request first goes to the manager and then to HR after manager approval.
+- Given I mark a wellness leave type to notify a wellness champion, when such a request is approved, then the system sends a notification to the configured wellness contact.","Leave","Flexible Leave Approval Workflows"
+"STORY","","As a manager, I want to view a team leave calendar so that I can quickly see who is off when.","As a manager, I want to view a team leave calendar so that I can quickly see who is off when.
+
+Requirements: PW-LEAVE-14, PW-LEAVE-15
+
+Acceptance Criteria:
+- Given I have direct reports, when I open the team leave calendar, then I see approved and pending leave for my team in a calendar view.
+- Given the calendar is displayed, when I apply filters by leave type, person or org unit, then only matching entries are shown.","Leave","Team Calendars & Capacity Protection"
+"STORY","","As an HR or operations manager, I want to enforce simple roster rules so that critical teams are not understaffed.","As an HR or operations manager, I want to enforce simple roster rules so that critical teams are not understaffed.
+
+Requirements: PW-LEAVE-16, PW-LEAVE-17, PW-LEAVE-18
+
+Acceptance Criteria:
+- Given an Org Unit exists, when I configure minimum staff on duty and/or maximum simultaneous leaves, then the system stores a roster rule for that unit.
+- Given a new leave request would breach a roster rule, when a manager tries to approve it, then the system displays a warning explaining the breach.
+- Given I have override permission, when I approve despite the warning, then the system allows approval and logs that a roster rule was overridden.","Leave","Team Calendars & Capacity Protection"
+"STORY","","As an employee, I want to see my Recovery Index so that I understand whether I am taking enough rest.","As an employee, I want to see my Recovery Index so that I understand whether I am taking enough rest.
+
+Requirements: PW-LEAVE-19, PW-LEAVE-20
+
+Acceptance Criteria:
+- Given my leave usage and entitlement, when the system computes my Recovery Index, then I get an index value and status based on configured rules.
+- Given Recovery Index is computed, when I open my ESS dashboard, then I see my current index and a short explanation of its meaning.","Leave","Recovery Index for Rest & Recharge"
+"STORY","","As a manager or HR user, I want to see Recovery Index distributions so that I can identify under-rested or at-risk groups.","As a manager or HR user, I want to see Recovery Index distributions so that I can identify under-rested or at-risk groups.
+
+Requirements: PW-LEAVE-21, PW-LEAVE-22
+
+Acceptance Criteria:
+- Given Recovery Index exists for employees, when I open the manager Recovery view, then I see the distribution of statuses (green/amber/red) for my team.
+- Given I am an HR user, when I view organization Recovery, then I see Recovery summaries grouped by org unit with filters for manager, department or period.","Leave","Recovery Index for Rest & Recharge"
+"STORY","","As a platform or wellness owner, I want anonymised leave wellness signals generated so that ZHEP can drive interventions without exposing individuals.","As a platform or wellness owner, I want anonymised leave wellness signals generated so that ZHEP can drive interventions without exposing individuals.
+
+Requirements: PW-LEAVE-23, PW-LEAVE-24
+
+Acceptance Criteria:
+- Given leave usage and Recovery data exists, when a scheduled job runs, then it produces aggregate metrics such as under-use of leave and long periods with no breaks by org unit or group.
+- Given anonymisation settings per tenant, when wellness signals are sent to ZHEP, then no individually identifiable data is included where aggregation is required.","Leave","Leave-Based Wellness Signals to ZHEP"
+"STORY","","As an HR user, I want to create performance cycles so that I can structure when appraisals happen and track their status.","As an HR user, I want to create performance cycles so that I can structure when appraisals happen and track their status.
+
+Requirements: PW-PERF-01, PW-PERF-02
+
+Acceptance Criteria:
+- Given I create a performance cycle with code, name, start date, end date and status, when I save it, then the cycle is stored for the tenant.
+- Given a cycle is in Planning, when I change its status to Active, then the system prevents structural changes that would break existing appraisals.
+- Given a cycle is Closed, when I attempt to edit its dates, then the system blocks the edit or requires an admin override with audit.","Performance","Configure Performance Cycles & Templates"
+"STORY","","As an HR user, I want to configure performance templates and sections so that different roles use tailored appraisal structures.","As an HR user, I want to configure performance templates and sections so that different roles use tailored appraisal structures.
+
+Requirements: PW-PERF-03, PW-PERF-04, PW-PERF-05
+
+Acceptance Criteria:
+- Given I create a template and add sections with is-scoring and weight, when I save it, then the scoring sections’ weights must sum to the configured total (for example 100%).
+- Given a template is mapped to a Job Role or family, when appraisals are created for employees in that role/family, then they use that template and its sections.
+- Given a section is marked non-scoring, when appraisals are created, then that section does not contribute to numeric scoring but can still be mandatory.","Performance","Configure Performance Cycles & Templates"
+"STORY","","As an HR user, I want to configure rating bands so that overall scores can be mapped to simple labels.","As an HR user, I want to configure rating bands so that overall scores can be mapped to simple labels.
+
+Requirements: PW-PERF-19
+
+Acceptance Criteria:
+- Given I define rating bands with names and score ranges, when I save them, then ranges cannot overlap.
+- Given rating bands exist, when an appraisal overall score is computed, then the system maps it to the matching band and stores that band.","Performance","Configure Performance Cycles & Templates"
+"STORY","","As an HR user, I want to configure questions for narrative sections so that self reflection and values feedback are structured.","As an HR user, I want to configure questions for narrative sections so that self reflection and values feedback are structured.
+
+Requirements: PW-PERF-06, PW-PERF-07
+
+Acceptance Criteria:
+- Given a template section exists, when I add questions with text, help text and response type, then the system stores them under that section.
+- Given a template with questions is used in a cycle, when appraisals are generated, then each appraisal includes those questions for the relevant respondents.","Performance","Capture Rich Performance Feedback & Goals"
+"STORY","","As an employee or manager, I want to capture answers for narrative questions so that appraisals include rich feedback from both sides.","As an employee or manager, I want to capture answers for narrative questions so that appraisals include rich feedback from both sides.
+
+Requirements: PW-PERF-08, PW-PERF-09
+
+Acceptance Criteria:
+- Given an appraisal is in self-review, when the employee answers narrative questions, then self ratings and comments are stored per question.
+- Given an appraisal is in manager-review, when the manager answers the same questions, then manager ratings and comments are stored in the same answer records.
+- Given final agreed ratings are entered, when the appraisal is finalised, then the system stores final rating and comment for each question.","Performance","Capture Rich Performance Feedback & Goals"
+"STORY","","As a manager or employee, I want to define KPI items per appraisal so that job-specific targets are reflected in scoring.","As a manager or employee, I want to define KPI items per appraisal so that job-specific targets are reflected in scoring.
+
+Requirements: PW-PERF-10, PW-PERF-11
+
+Acceptance Criteria:
+- Given an appraisal has a KPI section, when I add KPI items with title, description, target and weight, then the system stores them and validates the total weight.
+- Given KPI ratings are entered, when section scores are computed, then the KPI section score is calculated as a weighted sum of item ratings.","Performance","Capture Rich Performance Feedback & Goals"
+"STORY","","As a manager or employee, I want to record OKR initiatives per appraisal so that key projects and contributions are reflected.","As a manager or employee, I want to record OKR initiatives per appraisal so that key projects and contributions are reflected.
+
+Requirements: PW-PERF-12, PW-PERF-13
+
+Acceptance Criteria:
+- Given an appraisal has an OKR section, when I add initiatives with name, objective, role description and weight, then the system stores them and validates weight totals.
+- Given ratings for initiatives are captured, when the OKR section score is computed, then it is calculated as a weighted average of initiative ratings.","Performance","Capture Rich Performance Feedback & Goals"
+"STORY","","As an HR user, I want the system to generate appraisals for employees in a cycle so that everyone has the correct form assigned.","As an HR user, I want the system to generate appraisals for employees in a cycle so that everyone has the correct form assigned.
+
+Requirements: PW-PERF-14
+
+Acceptance Criteria:
+- Given a cycle is Active and templates are mapped, when I trigger appraisal generation, then an appraisal is created for each in-scope employee with the correct template.
+- Given new employees join mid-cycle, when I run generation for new joiners, then appraisals are created only for employees who meet the inclusion rules.","Performance","Run Appraisal Workflow & Scoring"
+"STORY","","As a manager, I want to progress appraisals through workflow stages so that the cycle can be completed.","As a manager, I want to progress appraisals through workflow stages so that the cycle can be completed.
+
+Requirements: PW-PERF-15, PW-PERF-16
+
+Acceptance Criteria:
+- Given an appraisal is in Self-Review, when the employee submits, then the status changes to Manager-Review if mandatory fields are complete.
+- Given an appraisal is in Manager-Review, when the manager submits, then the status moves to HR-Review or Finalised according to configuration.
+- Given an appraisal is Finalised, when a non-HR user tries to edit it, then the system blocks changes; when an HR override occurs, an audit log entry is written.","Performance","Run Appraisal Workflow & Scoring"
+"STORY","","As an HR or manager, I want section and overall scores to be computed automatically so that ratings are consistent and transparent.","As an HR or manager, I want section and overall scores to be computed automatically so that ratings are consistent and transparent.
+
+Requirements: PW-PERF-17, PW-PERF-18, PW-PERF-19
+
+Acceptance Criteria:
+- Given scoring sections have ratings, when the system calculates section scores, then it uses configured formulas to compute self, manager and final section scores.
+- Given section weights are defined, when the overall score is calculated, then it is a weighted sum of final section scores.
+- Given rating bands exist, when the overall score is stored, then the corresponding rating band is also stored on the appraisal.","Performance","Run Appraisal Workflow & Scoring"
+"STORY","","As a manager, I want to capture growth and wellness actions at the end of an appraisal so that follow-ups are explicit.","As a manager, I want to capture growth and wellness actions at the end of an appraisal so that follow-ups are explicit.
+
+Requirements: PW-PERF-20
+
+Acceptance Criteria:
+- Given an appraisal is nearing completion, when I open the actions section, then I can add 3–5 actions tagged as performance, learning or wellness.
+- Given no action is tagged as wellness, when I attempt to finalise the appraisal, then the system warns me that at least one wellness-related action is recommended or required per configuration.","Performance","Growth & Wellness Commitments"
+"STORY","","As a wellness or platform owner, I want wellness actions to be exposed to ZHEP so that they become part of the broader wellness journey.","As a wellness or platform owner, I want wellness actions to be exposed to ZHEP so that they become part of the broader wellness journey.
+
+Requirements: PW-PERF-21, PW-INT-01
+
+Acceptance Criteria:
+- Given an appraisal has wellness-tagged actions, when the appraisal is finalised, then an event or API call is emitted including those actions for ZHEP.
+- Given ZHEP integration is enabled, when the event is successfully delivered, then the actions are marked as synced in PeopleWell.","Performance","Growth & Wellness Commitments"
+"STORY","","As a manager or employee, I want to record 1:1 check-ins with wellbeing scores so that we can track wellbeing trends.","As a manager or employee, I want to record 1:1 check-ins with wellbeing scores so that we can track wellbeing trends.
+
+Requirements: PW-PERF-22
+
+Acceptance Criteria:
+- Given I log a check-in, when I enter date/time, summary and numeric scores for energy, workload and stress, then the system stores the check-in linked to the employee and manager.","Performance","Continuous Check-ins & Wellbeing Signals"
+"STORY","","As a product or compliance owner, I want check-ins to feed insights but not be used directly for punitive actions so that people feel safe being honest.","As a product or compliance owner, I want check-ins to feed insights but not be used directly for punitive actions so that people feel safe being honest.
+
+Requirements: PW-PERF-23, PW-PERF-24
+
+Acceptance Criteria:
+- Given the Manager Copilot requests wellbeing context, when the system compiles signals, then check-in trends are included as one of several inputs.
+- Given someone attempts to build a punitive list using check-in scores, when reporting features are configured, then check-in fields are not available as direct filters for disciplinary lists.","Performance","Continuous Check-ins & Wellbeing Signals"
+"STORY","","As a product owner or HR user, I want the system to award points for healthy behaviours so that we can positively reinforce good patterns.","As a product owner or HR user, I want the system to award points for healthy behaviours so that we can positively reinforce good patterns.
+
+Requirements: PW-GAME-01, PW-GAME-02
+
+Acceptance Criteria:
+- Given a rule exists for completing a self-review on time, when an employee submits before the deadline, then the system creates a points transaction with the configured value.
+- Given a rule exists for taking a planned multi-day break, when the leave is approved, then the system awards points according to the rule.
+- Given tenant-safe rule templates, when an admin configures new rules, then only allowed, wellness-safe rule types are available.","Gamification","Points & Levels for Healthy Habits"
+"STORY","","As an employee, I want to see my level based on cumulative points so that I understand my progress in building healthy habits.","As an employee, I want to see my level based on cumulative points so that I understand my progress in building healthy habits.
+
+Requirements: PW-GAME-03, PW-GAME-04, PW-GAME-05
+
+Acceptance Criteria:
+- Given level thresholds are defined, when my cumulative points pass a threshold, then the system updates my current level.
+- Given I open my profile or dashboard, when my level is computed, then I see my current level and a short description.
+- Given competitive leaderboards are out of scope, when I look for rankings by level, then no public ranking is available.","Gamification","Points & Levels for Healthy Habits"
+"STORY","","As an HR or wellness admin, I want to configure team wellness challenges so that teams are nudged towards healthy patterns.","As an HR or wellness admin, I want to configure team wellness challenges so that teams are nudged towards healthy patterns.
+
+Requirements: PW-GAME-06
+
+Acceptance Criteria:
+- Given I create a challenge like Quarter of Recovery with dates and targets, when I assign it to teams, then the system begins tracking relevant behaviours for those teams.","Gamification","Team Wellness Challenges"
+"STORY","","As a manager, I want to see my team’s challenge progress so that I know whether we are moving in the right direction.","As a manager, I want to see my team’s challenge progress so that I know whether we are moving in the right direction.
+
+Requirements: PW-GAME-07, PW-GAME-08
+
+Acceptance Criteria:
+- Given a challenge is active for my team, when I open the challenge dashboard, then I see team-level completion percentage and high-level trends.
+- Given HR views challenge reporting by org unit, when they open the view, then they see aggregated completion rates and summary insights per team.","Gamification","Team Wellness Challenges"
+"STORY","","As a manager, I want to see a health stewardship scorecard so that I understand how well I support wellbeing in my team.","As a manager, I want to see a health stewardship scorecard so that I understand how well I support wellbeing in my team.
+
+Requirements: PW-GAME-09, PW-GAME-10
+
+Acceptance Criteria:
+- Given data exists on planned breaks, check-ins and Recovery Index for my team, when the system computes my scorecard, then it shows key metrics for the selected period.
+- Given scorecards are private, when I view mine, then only I and HR have access and no leaderboard of managers is available.","Gamification","Manager Health Stewardship Scorecards"
+"STORY","","As an employee, I want to see wellness rings on my dashboard so that I get quick visual feedback on my habits.","As an employee, I want to see wellness rings on my dashboard so that I get quick visual feedback on my habits.
+
+Requirements: PW-GAME-11
+
+Acceptance Criteria:
+- Given underlying metrics for leave, self-reviews and wellness actions, when I open my dashboard, then the system renders recovery, reflection and wellness indicators.","Gamification","Wellness Visuals & Micro-Rewards"
+"STORY","","As an HR or wellness admin, I want the system to award micro-badges for positive behaviours so that employees get positive reinforcement.","As an HR or wellness admin, I want the system to award micro-badges for positive behaviours so that employees get positive reinforcement.
+
+Requirements: PW-GAME-12
+
+Acceptance Criteria:
+- Given a badge criterion is defined, when an employee meets that criterion, then the system awards the badge and optionally shows a congratulatory message.
+- Given badges are awarded, when employees view their profile, then they see their earned wellness badges.","Gamification","Wellness Visuals & Micro-Rewards"
+"STORY","","As an employee, I want to ask the Employee Copilot HR questions so that I can quickly understand policies and my own data.","As an employee, I want to ask the Employee Copilot HR questions so that I can quickly understand policies and my own data.
+
+Requirements: PW-AI-01, PW-AI-02
+
+Acceptance Criteria:
+- Given I am logged in as an employee, when I ask the copilot about my annual leave, then it responds using my current leave balance for the tenant.
+- Given I ask about a specific HR policy, when the copilot responds, then it cites tenant-specific policy content and is labelled as AI-generated.","AI","Employee Copilot for HR & Wellness Questions"
+"STORY","","As an employee, I want to ask the Employee Copilot wellness process questions so that I can easily access wellness programs available to me.","As an employee, I want to ask the Employee Copilot wellness process questions so that I can easily access wellness programs available to me.
+
+Requirements: PW-AI-01, PW-AI-02
+
+Acceptance Criteria:
+- Given ZHEP wellness programs are integrated, when I ask how to access a mental health day, then the copilot explains the process and points to relevant leave types or programs using only non-clinical catalog data.","AI","Employee Copilot for HR & Wellness Questions"
+"STORY","","As a manager, I want to ask the Manager Copilot about team recovery so that I can plan interventions.","As a manager, I want to ask the Manager Copilot about team recovery so that I can plan interventions.
+
+Requirements: PW-AI-03, PW-AI-04
+
+Acceptance Criteria:
+- Given I am a manager, when I ask for a summary of my team’s leave and recovery for the quarter, then the copilot returns a short narrative with key metrics and indicates the data it used.
+- Given the copilot suggests actions, when I read them, then they are phrased as recommendations and no actions are taken automatically.","AI","Manager Insight Copilot"
+"STORY","","As a manager, I want the system to generate a draft appraisal summary so that I can save time while refining the message.","As a manager, I want the system to generate a draft appraisal summary so that I can save time while refining the message.
+
+Requirements: PW-AI-05, PW-AI-06, PW-AI-07
+
+Acceptance Criteria:
+- Given an appraisal has sufficient content, when I request an AI summary, then the system generates and displays a draft labelled as AI-generated.
+- Given I edit the draft summary, when I save it, then the stored summary matches my edited version.
+- Given a draft is AI-generated, when I attempt to finalise the appraisal without review, then the system requires explicit confirmation.","AI","Performance Summaries & Coaching Assistance"
+"STORY","","As a manager, I want coaching suggestions while writing feedback so that my comments are constructive and wellbeing-friendly.","As a manager, I want coaching suggestions while writing feedback so that my comments are constructive and wellbeing-friendly.
+
+Requirements: PW-AI-08, PW-AI-09
+
+Acceptance Criteria:
+- Given I am typing feedback, when I request coaching suggestions, then the system proposes alternative phrasing that is specific and non-punitive.
+- Given coaching suggestions appear, when I review them, then I can accept, modify or reject them and they remain clearly labelled as AI suggestions.","AI","Performance Summaries & Coaching Assistance"
+"STORY","","As an employee or manager, I want HR requests to be automatically categorised so that they reach the right HR person quickly.","As an employee or manager, I want HR requests to be automatically categorised so that they reach the right HR person quickly.
+
+Requirements: PW-AI-10, PW-AI-11
+
+Acceptance Criteria:
+- Given I submit an HR request with free-text description, when the request is saved, then the system classifies it into a suggested category such as leave, contract or policy.
+- Given a suggested category exists, when HR reviews the request, then they can confirm or change the category before assignment.","AI","Smart HR Request Triage"
+"STORY","","As an HR agent, I want draft responses for common HR questions so that I can respond faster with consistent information.","As an HR agent, I want draft responses for common HR questions so that I can respond faster with consistent information.
+
+Requirements: PW-AI-12
+
+Acceptance Criteria:
+- Given a request about a standard policy, when I open it, then the system provides a draft response generated from policy documents.
+- Given a draft response exists, when I send a reply, then the content sent matches my reviewed and edited version.","AI","Smart HR Request Triage"
+"STORY","","As an end user, I want AI outputs to be clearly labelled and rateable so that I know what is machine-generated and can flag issues.","As an end user, I want AI outputs to be clearly labelled and rateable so that I know what is machine-generated and can flag issues.
+
+Requirements: PW-AI-13
+
+Acceptance Criteria:
+- Given any AI-generated content is displayed, when it appears, then it is clearly marked as an AI-generated suggestion or draft.
+- Given I disagree with an AI output, when I click a feedback control, then the system records that the output was wrong or unhelpful.","AI","Safe & Transparent AI Governance"
+"STORY","","As a security architect, I want AI prompts and context to be tenant- and role-scoped so that no cross-tenant or unauthorised data is used.","As a security architect, I want AI prompts and context to be tenant- and role-scoped so that no cross-tenant or unauthorised data is used.
+
+Requirements: PW-AI-14, PW-AI-15
+
+Acceptance Criteria:
+- Given an AI request is made within Tenant A, when the system builds the prompt, then it includes only Tenant A data authorised for that user’s role.
+- Given two tenants exist, when AI responses are generated, then no response contains combined data from both tenants.","AI","Safe & Transparent AI Governance"
+"STORY","","As an employee, I want to view and update permitted personal details so that my information stays accurate without going through HR for minor changes.","As an employee, I want to view and update permitted personal details so that my information stays accurate without going through HR for minor changes.
+
+Requirements: PW-ESS-01, PW-NFR-02
+
+Acceptance Criteria:
+- Given I am logged in as an employee, when I open my profile, then I see my personal details with some fields editable and others read-only.
+- Given HR has configured which fields are editable, when I attempt to change a non-editable field, then the system prevents the change and explains why.","ESS","Employee Self-Service Hub"
+"STORY","","As an employee, I want to view my employment, leave and performance history so that I have full visibility into my data.","As an employee, I want to view my employment, leave and performance history so that I have full visibility into my data.
+
+Requirements: PW-ESS-01
+
+Acceptance Criteria:
+- Given I open my employment view, when the page loads, then I see my role, org unit, manager and contract summary.
+- Given I open my leave view, when it loads, then I see my current leave balances and a list of past requests with statuses.
+- Given I open my performance view, when it loads, then I see my current and historical appraisals and outcomes.","ESS","Employee Self-Service Hub"
+"STORY","","As a manager, I want a single console to see my team, leave approvals and performance tasks so that I can manage people efficiently.","As a manager, I want a single console to see my team, leave approvals and performance tasks so that I can manage people efficiently.
+
+Requirements: PW-MSS-01
+
+Acceptance Criteria:
+- Given I am logged in as a manager, when I open the manager console, then I see my direct reports, pending leave approvals and active performance actions.
+- Given I click on a direct report, when their mini-profile opens, then I see their role, org unit, leave summary and performance status.","MSS","Manager Self-Service Console"
+"STORY","","As a system admin, I want the frontend to adapt to user roles so that each user only sees features they should access.","As a system admin, I want the frontend to adapt to user roles so that each user only sees features they should access.
+
+Requirements: PW-ESS-01, PW-MSS-01, PW-NFR-02, PW-NFR-03
+
+Acceptance Criteria:
+- Given a user has only the Employee role, when they log in, then they see only ESS features and not manager or HR consoles.
+- Given a user has Manager and Employee roles, when they log in, then they can access both employee and manager views with correct scoping.
+- Given an Exec role is configured, when an Exec logs in, then they see aggregate reports but not personal data beyond their authorisation.","ESS","Role-Aware Navigation & Permissions in Self-Service"
+"STORY","","As an employee, I want to see Recovery Index, wellness rings and badges in self-service so that wellness feels part of my normal work tools.","As an employee, I want to see Recovery Index, wellness rings and badges in self-service so that wellness feels part of my normal work tools.
+
+Requirements: PW-ESS-01, PW-GAME-11, PW-GAME-12, PW-LEAVE-19, PW-LEAVE-20
+
+Acceptance Criteria:
+- Given Recovery Index and gamification data are computed, when I open my ESS dashboard, then I see recovery, reflection and wellness indicators plus any badges earned.","ESS","Self-Service Wellness Experience"
+"STORY","","As a manager, I want to see team-level wellness indicators in MSS so that I can act early when rest patterns are unhealthy.","As a manager, I want to see team-level wellness indicators in MSS so that I can act early when rest patterns are unhealthy.
+
+Requirements: PW-MSS-01, PW-LEAVE-21, PW-LEAVE-22, PW-GAME-08, PW-GAME-10
+
+Acceptance Criteria:
+- Given team Recovery Index and challenge completion data exist, when I open the team wellbeing view, then I see aggregated Recovery distribution, challenge progress and my private manager health scorecard.","MSS","Self-Service Wellness Experience"
+"STORY","","As a platform engineer, I want PeopleWell to emit wellness-relevant events to ZHEP so that wellness journeys can be orchestrated centrally.","As a platform engineer, I want PeopleWell to emit wellness-relevant events to ZHEP so that wellness journeys can be orchestrated centrally.
+
+Requirements: PW-INT-01, PW-LEAVE-23, PW-LEAVE-24, PW-PERF-21
+
+Acceptance Criteria:
+- Given an appraisal with wellness actions is finalised, when the event handler runs, then an event including those actions is sent to ZHEP according to tenant settings.
+- Given leave-based wellness signals are generated, when the scheduled job runs, then aggregated under-use, over-use and no-break metrics are sent to ZHEP with required anonymisation.","Platform","ZHEP Wellness Integration"
+"STORY","","As an integrations engineer, I want REST APIs for core objects so that external systems can integrate with PeopleWell.","As an integrations engineer, I want REST APIs for core objects so that external systems can integrate with PeopleWell.
+
+Requirements: PW-INT-03, PW-NFR-06
+
+Acceptance Criteria:
+- Given I have a valid tenant-scoped API token, when I call APIs for employees, org units, leave and appraisals, then I receive data only for that tenant and according to my role.
+- Given an unauthorised or cross-tenant request is made, when the API is called, then the system rejects the request with an appropriate error.","Platform","External Integrations & Open APIs"
+"STORY","","As an integrations engineer, I want webhooks for key events so that downstream systems can react in near real time.","As an integrations engineer, I want webhooks for key events so that downstream systems can react in near real time.
+
+Requirements: PW-NFR-07
+
+Acceptance Criteria:
+- Given a webhook endpoint is configured, when a leave request is approved, then the system posts a structured event payload to that endpoint.
+- Given the endpoint is unavailable, when the webhook call fails, then the system retries or logs the failure according to the configured policy.","Platform","External Integrations & Open APIs"
+"STORY","","As a security engineer, I want strict tenant isolation across UI, APIs and AI so that no tenant can see another tenant’s data.","As a security engineer, I want strict tenant isolation across UI, APIs and AI so that no tenant can see another tenant’s data.
+
+Requirements: PW-NFR-01, PW-CORE-03, PW-CORE-04, PW-AI-14, PW-AI-15
+
+Acceptance Criteria:
+- Given a user is associated with Tenant A, when they perform searches or list operations, then only Tenant A entities are returned.
+- Given an AI call is prepared, when the system builds the prompt, then only data from the requesting tenant and authorised scope is included.","Platform","Strong Multi-Tenancy & Isolation"
+"STORY","","As an admin, I want to configure roles and assign them to users so that access is limited to what each role needs.","As an admin, I want to configure roles and assign them to users so that access is limited to what each role needs.
+
+Requirements: PW-NFR-02, PW-NFR-03
+
+Acceptance Criteria:
+- Given base roles exist, when I assign Employee, Manager, HR, Admin or Exec roles to users, then those users see features consistent with their roles.
+- Given manager scoping is enabled, when a manager views team data, then they see only direct or indirect reports according to the org structure.","Platform","Security, RBAC & Auditability"
+"STORY","","As a compliance officer, I want key changes to be audited so that we can reconstruct critical decisions.","As a compliance officer, I want key changes to be audited so that we can reconstruct critical decisions.
+
+Requirements: PW-NFR-04, PW-NFR-05
+
+Acceptance Criteria:
+- Given a manual leave balance adjustment is made, when it is saved, then the system records who made the change, when and the before and after values.
+- Given a finalised appraisal is overridden by HR, when the change is saved, then an audit log entry is written with details of the modification.","Platform","Security, RBAC & Auditability"
+"STORY","","As an HR admin, I want to configure simple approval workflows for leave and performance so that processes match our organisation.","As an HR admin, I want to configure simple approval workflows for leave and performance so that processes match our organisation.
+
+Requirements: PW-NFR-08, PW-NFR-09, PW-LEAVE-12, PW-LEAVE-13, PW-PERF-15
+
+Acceptance Criteria:
+- Given I set leave approvals to Manager then HR, when employees submit leave requests, then those requests follow that sequence.
+- Given I set performance workflow to Self, Manager, HR, when appraisals are generated, then they follow that sequence with matching statuses.
+- Given workflows are configured via simple forms, when I update them, then I do not need advanced workflow tooling or BPMN modelling.","Platform","Configurability & Simple Workflow Engine"
+"STORY","","As an implementation consultant, I want to import core data via CSV or Excel so that tenants can be onboarded quickly.","As an implementation consultant, I want to import core data via CSV or Excel so that tenants can be onboarded quickly.
+
+Requirements: PW-NFR-10, PW-NFR-11
+
+Acceptance Criteria:
+- Given I download an import template for employees, org units or positions, when I upload a populated file, then the system validates the data and imports valid rows.
+- Given some rows fail validation, when I view the import report, then I see line-level error messages that I can correct and re-upload.","Platform","Onboarding at Speed (Imports & Setup)"
+"STORY","","As an HR or exec user, I want standard reports on headcount, leave, Recovery and gamification so that I can make data-driven decisions.","As an HR or exec user, I want standard reports on headcount, leave, Recovery and gamification so that I can make data-driven decisions.
+
+Requirements: PW-NFR-12, PW-NFR-13, PW-LEAVE-21, PW-LEAVE-22, PW-GAME-08, PW-GAME-10
+
+Acceptance Criteria:
+- Given I open the reporting section, when I run headcount, leave usage, Recovery and gamification reports, then the system generates summaries grouped by org unit or manager as appropriate.
+- Given a report is generated, when I export it, then I receive a CSV or Excel file with the same data.","Platform","Insightful Reporting & Analytics Foundations"

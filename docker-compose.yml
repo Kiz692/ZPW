@@ -1,0 +1,55 @@
+version: '3.8'
+
+services:
+  # PostgreSQL Database
+  postgres:
+    image: postgres:16-alpine
+    container_name: zpw-postgres
+    environment:
+      POSTGRES_USER: zpw_user
+      POSTGRES_PASSWORD: zpw_dev_password
+      POSTGRES_DB: zpw_db
+      PGDATA: /var/lib/postgresql/data/pgdata
+    ports:
+      - "5432:5432"  # If port conflict, change to "15432:5432" and update DATABASE_URL
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      # Mount init scripts if needed
+      - ./backend/db/init:/docker-entrypoint-initdb.d
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U zpw_user -d zpw_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - zpw-network
+    restart: unless-stopped
+
+  # Redis for caching and rate limiting
+  redis:
+    image: redis:7-alpine
+    container_name: zpw-redis
+    ports:
+      - "6379:6379"  # If port conflict, change to "16379:6379" and update REDIS_URL
+    volumes:
+      - redis_data:/data
+    command: redis-server --appendonly yes
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+    networks:
+      - zpw-network
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
+    driver: local
+  redis_data:
+    driver: local
+
+networks:
+  zpw-network:
+    driver: bridge
+
