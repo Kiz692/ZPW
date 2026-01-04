@@ -1,6 +1,8 @@
 ---
-trigger: always_on
+trigger: model_decision
 ---
+
+
 # Zimasa PeopleWell (ZPW) - Project Rules
 
 ## Project Overview
