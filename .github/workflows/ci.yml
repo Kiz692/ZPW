@@ -1,0 +1,248 @@
+name: CI Pipeline
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+
+jobs:
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: 'backend/package-lock.json'
+
+      - name: Install dependencies
+        working-directory: ./backend
+        run: npm ci
+
+      - name: Run linter
+        working-directory: ./backend
+        run: npm run lint
+
+  type-check:
+    name: Type Check
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    needs: lint
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: 'backend/package-lock.json'
+
+      - name: Install dependencies
+        working-directory: ./backend
+        run: npm ci
+
+      - name: Type check
+        working-directory: ./backend
+        run: npm run type-check
+
+  unit-tests:
+    name: Unit Tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    needs: type-check
+
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: zpw_user
+          POSTGRES_PASSWORD: zpw_test_password
+          POSTGRES_DB: zpw_test_db
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+
+    env:
+      DATABASE_URL: postgresql://zpw_user:zpw_test_password@localhost:5432/zpw_test_db
+      NODE_ENV: test
+      SKIP_AUTH: 'true'
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: 'backend/package-lock.json'
+
+      - name: Install dependencies
+        working-directory: ./backend
+        run: npm ci
+
+      - name: Run migrations
+        working-directory: ./backend
+        run: npm run db:migrate
+        env:
+          DATABASE_URL: ${{ env.DATABASE_URL }}
+
+      - name: Run unit tests
+        working-directory: ./backend
+        run: npm run test:unit
+
+  integration-tests:
+    name: Integration Tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    needs: unit-tests
+
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: zpw_user
+          POSTGRES_PASSWORD: zpw_test_password
+          POSTGRES_DB: zpw_test_db
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+
+    env:
+      DATABASE_URL: postgresql://zpw_user:zpw_test_password@localhost:5432/zpw_test_db
+      NODE_ENV: test
+      SKIP_AUTH: 'true'
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: 'backend/package-lock.json'
+
+      - name: Install dependencies
+        working-directory: ./backend
+        run: npm ci
+
+      - name: Run migrations
+        working-directory: ./backend
+        run: npm run db:migrate
+        env:
+          DATABASE_URL: ${{ env.DATABASE_URL }}
+
+      - name: Run integration tests
+        working-directory: ./backend
+        run: npm run test:integration
+
+  migration-check:
+    name: Migration Check
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    needs: integration-tests
+
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: zpw_user
+          POSTGRES_PASSWORD: zpw_test_password
+          POSTGRES_DB: zpw_test_db
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+
+    env:
+      DATABASE_URL: postgresql://zpw_user:zpw_test_password@localhost:5432/zpw_test_db
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: 'backend/package-lock.json'
+
+      - name: Install dependencies
+        working-directory: ./backend
+        run: npm ci
+
+      - name: Check migrations (dry-run)
+        working-directory: ./backend
+        run: |
+          # Verify migration files exist and are valid
+          if [ ! -f "db/migrations/0000_clammy_silver_centurion.sql" ]; then
+            echo "❌ Migration file not found"
+            exit 1
+          fi
+          echo "✅ Migration file exists"
+
+      - name: Verify migration can be applied
+        working-directory: ./backend
+        run: npm run db:migrate
+        env:
+          DATABASE_URL: ${{ env.DATABASE_URL }}
+
+  auth-guard-check:
+    name: Auth Guard Check
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
+    needs: lint
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        working-directory: ./backend
+        run: npm ci
+
+      - name: Test auth guard (should pass in test env)
+        working-directory: ./backend
+        run: node check-skip-auth.js
+        env:
+          NODE_ENV: test
+          SKIP_AUTH: 'true'
+
+      - name: Test auth guard (should fail in production with SKIP_AUTH)
+        working-directory: ./backend
+        run: |
+          if node check-skip-auth.js; then
+            echo "❌ Auth guard should have failed in production with SKIP_AUTH=true"
+            exit 1
+          else
+            echo "✅ Auth guard correctly prevents SKIP_AUTH in production"
+          fi
+        env:
+          NODE_ENV: production
+          SKIP_AUTH: 'true'
+        continue-on-error: false
