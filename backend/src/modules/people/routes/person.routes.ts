@@ -23,7 +23,19 @@ export async function registerPersonRoutes(app: FastifyInstance) {
       schema: {
         description: 'Create a new person',
         tags: ['People Core - Person'],
-        body: personCreateSchema,
+        body: {
+          type: 'object',
+          required: ['perFirstName', 'perLastName'],
+          properties: {
+            perFirstName: { type: 'string', minLength: 1, maxLength: 100 },
+            perLastName: { type: 'string', minLength: 1, maxLength: 150 },
+            perMiddleName: { type: 'string', maxLength: 100 },
+            perDisplayName: { type: 'string', maxLength: 255 },
+            perGenderCode: { type: 'string', maxLength: 50 },
+            perDateOfBirth: { type: 'string', format: 'date' },
+            perNationalityCode: { type: 'string', maxLength: 10 },
+          },
+        },
         response: {
           201: {
             description: 'Person created successfully',
@@ -35,13 +47,34 @@ export async function registerPersonRoutes(app: FastifyInstance) {
           },
         },
       },
+      preValidation: async (request: any, reply: any) => {
+        try {
+          // Validate with Zod schema for stricter validation
+          personCreateSchema.parse(request.body);
+        } catch (error: any) {
+          if (error.name === 'ZodError') {
+            return reply.status(400).send({ 
+              error: 'Validation error',
+              details: error.errors 
+            });
+          }
+          throw error;
+        }
+      },
     },
     async (request, reply) => {
       try {
         const userId = requireUser(request);
-        const person = await personService.create(request.body as any, userId);
+        const validatedBody = personCreateSchema.parse(request.body);
+        const person = await personService.create(validatedBody, userId);
         return reply.status(201).send(person);
       } catch (error: any) {
+        if (error.name === 'ZodError') {
+          return reply.status(400).send({ 
+            error: 'Validation error',
+            details: error.errors 
+          });
+        }
         if (error.message.includes('required')) {
           return reply.status(400).send({ error: error.message });
         }
@@ -95,7 +128,14 @@ export async function registerPersonRoutes(app: FastifyInstance) {
       schema: {
         description: 'List or search persons',
         tags: ['People Core - Person'],
-        querystring: personQuerySchema,
+        querystring: {
+          type: 'object',
+          properties: {
+            search: { type: 'string', minLength: 2 },
+            limit: { type: 'number', minimum: 1, maximum: 100 },
+            offset: { type: 'number', minimum: 0 },
+          },
+        },
         response: {
           200: {
             description: 'List of persons',
@@ -136,7 +176,18 @@ export async function registerPersonRoutes(app: FastifyInstance) {
             id: { type: 'number' },
           },
         },
-        body: personUpdateSchema,
+        body: {
+          type: 'object',
+          properties: {
+            perFirstName: { type: 'string', minLength: 1, maxLength: 100 },
+            perLastName: { type: 'string', minLength: 1, maxLength: 150 },
+            perMiddleName: { type: 'string', maxLength: 100 },
+            perDisplayName: { type: 'string', maxLength: 255 },
+            perGenderCode: { type: 'string', maxLength: 50 },
+            perDateOfBirth: { type: 'string', format: 'date' },
+            perNationalityCode: { type: 'string', maxLength: 10 },
+          },
+        },
         response: {
           200: {
             description: 'Person updated successfully',

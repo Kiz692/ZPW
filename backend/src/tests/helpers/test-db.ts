@@ -23,9 +23,9 @@ export async function truncatePeopleTables(): Promise<void> {
     'pid_person_identifier',
     'pid_person_contact',
     'pid_person',
-    'sys_tenant',
   ];
 
+  // Truncate in reverse dependency order to avoid FK issues
   // Disable foreign key checks temporarily
   await db.execute(sql`SET session_replication_role = 'replica'`);
 
@@ -35,6 +35,18 @@ export async function truncatePeopleTables(): Promise<void> {
 
   // Re-enable foreign key checks
   await db.execute(sql`SET session_replication_role = 'origin'`);
+}
+
+/**
+ * Create test tenant if it doesn't exist
+ */
+export async function ensureTestTenant(tenantId = 1): Promise<void> {
+  const { sysTenant } = await import('../../../core/db/schema/people.js');
+  const existing = await db.select().from(sysTenant).where(sql`${sysTenant.tenId} = ${tenantId}`).limit(1);
+  
+  if (existing.length === 0) {
+    await db.insert(sysTenant).values({ tenId: tenantId, tenName: `Test Tenant ${tenantId}` });
+  }
 }
 
 /**
@@ -50,6 +62,8 @@ export async function cleanupTestDb(): Promise<void> {
 export async function setupTestDb(): Promise<void> {
   // Verify connection
   await pool.query('SELECT 1');
+  // Ensure test tenant exists
+  await ensureTestTenant(1);
 }
 
 /**
