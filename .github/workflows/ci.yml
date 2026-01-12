@@ -196,7 +196,7 @@ jobs:
         working-directory: ./backend
         run: |
           # Verify migration files exist and are valid
-          if [ ! -f "backend/db/migrations/0000_clammy_silver_centurion.sql" ]; then
+          if [ ! -f "db/migrations/0000_clammy_silver_centurion.sql" ]; then
             echo "❌ Migration file not found"
             exit 1
           fi
