@@ -22,7 +22,8 @@
     "db:migrate": "drizzle-kit migrate",
     "db:push": "drizzle-kit push",
     "db:studio": "drizzle-kit studio",
-    "db:seed:demo": "tsx db/seeds/demo.seed.ts"
+    "db:seed:demo": "tsx db/seeds/demo.seed.ts",
+    "db:verify": "tsx scripts/verify-db.ts"
   },
   "keywords": [
     "hrms",

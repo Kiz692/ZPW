@@ -11,23 +11,8 @@ import { requireTenant } from '../../../core/auth/tenant.middleware.js';
 export async function registerStatusHistoryRoutes(app: FastifyInstance) {
   const statusHistoryService = new StatusHistoryService();
 
-  app.get(
-    '/employees/:employeeId/status-history',
-    {
-      schema: {
-        description: 'Get status history for employee',
-        tags: ['People Core - Status History'],
-        params: { type: 'object', properties: { employeeId: { type: 'number' } } },
-        querystring: statusHistoryQuerySchema,
-      },
-    },
-    async (request: any, reply) => {
-      const tenantId = requireTenant(request);
-      const query = statusHistoryQuerySchema.parse(request.query || {});
-      const history = await statusHistoryService.getByEmployeeId(Number(request.params.employeeId), tenantId);
-      return reply.send(history);
-    }
-  );
+  // Note: GET /employees/:id/status-history is handled in employee.routes.ts
+  // This route file only handles direct status history access by ID
 
   app.get(
     '/status-history/:id',

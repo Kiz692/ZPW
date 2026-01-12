@@ -14,6 +14,6 @@ if (!env.databaseUrl) {
   throw new Error('DATABASE_URL is required');
 }
 
-if (env.nodeEnv !== 'development' && env.skipAuth) {
-  throw new Error('SKIP_AUTH is only allowed when NODE_ENV=development');
+if (env.nodeEnv !== 'development' && env.nodeEnv !== 'test' && env.skipAuth) {
+  throw new Error('SKIP_AUTH is only allowed when NODE_ENV=development or test');
 }
