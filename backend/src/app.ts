@@ -5,6 +5,7 @@ import swagger from '@fastify/swagger';
 import swaggerUi from '@fastify/swagger-ui';
 
 import { registerHealthRoutes } from './core/health/routes.js';
+import { registerPeopleRoutes } from './modules/people/routes/index.js';
 
 type DbClient = {
   query: (sql: string) => Promise<unknown>;
@@ -32,6 +33,7 @@ export async function buildApp(dbClient?: DbClient) {
   });
 
   await registerHealthRoutes(app, dbClient);
+  await registerPeopleRoutes(app);
 
   return app;
 }
