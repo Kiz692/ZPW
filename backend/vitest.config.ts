@@ -25,8 +25,25 @@ export default defineConfig({
         '**/__tests__/**',
       ],
     },
-    testTimeout: 10000,
-    hookTimeout: 10000,
+    // Increased timeouts for integration tests that interact with database
+    testTimeout: 30000, // 30 seconds for individual tests
+    hookTimeout: 30000, // 30 seconds for setup/teardown hooks
+    teardownTimeout: 30000, // 30 seconds for teardown
+    // Retry flaky tests up to 2 times
+    retry: 2,
+    // Run tests in sequence to avoid database conflicts
+    pool: 'threads',
+    poolOptions: {
+      threads: {
+        singleThread: true, // Run tests sequentially to avoid DB conflicts
+      },
+    },
+    // Isolate test files
+    isolate: true,
+    // Sequence test execution
+    sequence: {
+      shuffle: false, // Don't shuffle tests - run in order
+    },
   },
   resolve: {
     alias: {

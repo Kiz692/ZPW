@@ -84,7 +84,13 @@ describe('EmployeeRepository', () => {
       );
 
       expect(updated?.empCurrentStatusCode).toBe('PROBATION');
-      expect(updated?.empCurrentStatusEffectiveDate).toEqual(new Date('2024-02-01'));
+      // Date comparison - handle both Date objects and date strings
+      const effectiveDate = updated?.empCurrentStatusEffectiveDate;
+      if (effectiveDate instanceof Date) {
+        expect(effectiveDate.toISOString().split('T')[0]).toBe('2024-02-01');
+      } else {
+        expect(effectiveDate).toBe('2024-02-01');
+      }
     });
   });
 });

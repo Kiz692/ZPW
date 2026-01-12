@@ -24,7 +24,18 @@ export async function registerEmployeeRoutes(app: FastifyInstance) {
       schema: {
         description: 'Create a new employee',
         tags: ['People Core - Employee'],
-        body: employeeCreateSchema,
+        body: {
+          type: 'object',
+          properties: {
+            personId: { type: 'number' },
+            personData: { type: 'object' },
+            empEmployeeNumber: { type: 'string' },
+            empHireDate: { type: 'string', format: 'date' },
+            empEmploymentTypeCode: { type: 'string' },
+            empCurrentStatusCode: { type: 'string' },
+            empCurrentStatusEffectiveDate: { type: 'string', format: 'date' },
+          },
+        },
         response: {
           201: {
             description: 'Employee created successfully',
@@ -36,14 +47,35 @@ export async function registerEmployeeRoutes(app: FastifyInstance) {
           },
         },
       },
+      preValidation: async (request: any, reply: any) => {
+        try {
+          // Validate with Zod schema for stricter validation
+          employeeCreateSchema.parse(request.body);
+        } catch (error: any) {
+          if (error.name === 'ZodError') {
+            return reply.status(400).send({ 
+              error: 'Validation error',
+              details: error.errors 
+            });
+          }
+          throw error;
+        }
+      },
     },
     async (request, reply) => {
       try {
         const tenantId = requireTenant(request);
         const userId = requireUser(request);
-        const employee = await employeeService.create(request.body as any, tenantId, userId);
+        const validatedBody = employeeCreateSchema.parse(request.body);
+        const employee = await employeeService.create(validatedBody as any, tenantId, userId);
         return reply.status(201).send(employee);
       } catch (error: any) {
+        if (error.name === 'ZodError') {
+          return reply.status(400).send({ 
+            error: 'Validation error',
+            details: error.errors 
+          });
+        }
         if (error.message.includes('required') || error.message.includes('already exists')) {
           return reply.status(400).send({ error: error.message });
         }
@@ -98,7 +130,13 @@ export async function registerEmployeeRoutes(app: FastifyInstance) {
       schema: {
         description: 'List employees for tenant',
         tags: ['People Core - Employee'],
-        querystring: employeeQuerySchema,
+        querystring: {
+          type: 'object',
+          properties: {
+            limit: { type: 'number' },
+            offset: { type: 'number' },
+          },
+        },
         response: {
           200: {
             description: 'List of employees',
@@ -128,7 +166,16 @@ export async function registerEmployeeRoutes(app: FastifyInstance) {
             id: { type: 'number' },
           },
         },
-        body: employeeUpdateSchema,
+        body: {
+          type: 'object',
+          properties: {
+            empEmployeeNumber: { type: 'string' },
+            empHireDate: { type: 'string', format: 'date' },
+            empEmploymentTypeCode: { type: 'string' },
+            empCurrentStatusCode: { type: 'string' },
+            empCurrentStatusEffectiveDate: { type: 'string', format: 'date' },
+          },
+        },
         response: {
           200: {
             description: 'Employee updated successfully',
@@ -139,6 +186,19 @@ export async function registerEmployeeRoutes(app: FastifyInstance) {
             type: 'object',
           },
         },
+      },
+      preValidation: async (request: any, reply: any) => {
+        try {
+          employeeUpdateSchema.parse(request.body);
+        } catch (error: any) {
+          if (error.name === 'ZodError') {
+            return reply.status(400).send({ 
+              error: 'Validation error',
+              details: error.errors 
+            });
+          }
+          throw error;
+        }
       },
     },
     async (request: any, reply) => {
@@ -174,7 +234,15 @@ export async function registerEmployeeRoutes(app: FastifyInstance) {
             id: { type: 'number' },
           },
         },
-        body: employeeStatusUpdateSchema,
+        body: {
+          type: 'object',
+          properties: {
+            statusCode: { type: 'string' },
+            effectiveDate: { type: 'string', format: 'date' },
+            reasonCode: { type: 'string' },
+            reasonNote: { type: 'string' },
+          },
+        },
         response: {
           200: {
             description: 'Employee status updated successfully',
@@ -185,6 +253,19 @@ export async function registerEmployeeRoutes(app: FastifyInstance) {
             type: 'object',
           },
         },
+      },
+      preValidation: async (request: any, reply: any) => {
+        try {
+          employeeStatusUpdateSchema.parse(request.body);
+        } catch (error: any) {
+          if (error.name === 'ZodError') {
+            return reply.status(400).send({ 
+              error: 'Validation error',
+              details: error.errors 
+            });
+          }
+          throw error;
+        }
       },
     },
     async (request: any, reply) => {

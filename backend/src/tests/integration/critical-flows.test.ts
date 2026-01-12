@@ -10,6 +10,16 @@ import { setupTestDb, cleanupTestDb } from '../helpers/test-db.js';
 import { TestFactories } from '../helpers/test-factories.js';
 import { createTestPerson } from '../helpers/test-helpers.js';
 import { PersonRepository } from '../../modules/people/repositories/person.repository.js';
+import {
+  verifyEmployeeExists,
+  verifyPersonExists,
+  verifyContractExists,
+  verifyTenantIsolation,
+  getEmployeeCount,
+  getContractCount,
+  getStatusHistoryCount,
+  getStatusHistoryFromDb,
+} from '../helpers/verify-data.js';
 
 describe('Critical Flows Integration Tests', () => {
   let app: FastifyInstance;
@@ -30,6 +40,11 @@ describe('Critical Flows Integration Tests', () => {
 
   describe('Critical Flow 1: Employee Creation Flow', () => {
     it('should create person → create employee → create contract → verify complete record', async () => {
+      // Get initial counts
+      const initialPersonCount = await getPersonCount();
+      const initialEmployeeCount = await getEmployeeCount(tenantId);
+      const initialContractCount = await getContractCount(tenantId);
+
       // 1. Create person
       const personResponse = await app.inject({
         method: 'POST',
@@ -45,6 +60,13 @@ describe('Critical Flows Integration Tests', () => {
       const person = JSON.parse(personResponse.body);
       expect(person.perId).toBeDefined();
 
+      // Verify person exists in database
+      const personExists = await verifyPersonExists(person.perId);
+      expect(personExists).toBe(true);
+      
+      const personCountAfter = await getPersonCount();
+      expect(personCountAfter).toBe(initialPersonCount + 1);
+
       // 2. Create employee
       const employeeResponse = await app.inject({
         method: 'POST',
@@ -55,7 +77,7 @@ describe('Critical Flows Integration Tests', () => {
         },
         payload: {
           personId: person.perId,
-          empEmployeeNumber: `EMP${Date.now()}`,
+          empEmployeeNumber: `TEST_EMP_${Date.now()}`,
           empHireDate: '2024-01-01',
           empEmploymentTypeCode: 'PERMANENT',
           empCurrentStatusCode: 'ACTIVE',
@@ -66,6 +88,13 @@ describe('Critical Flows Integration Tests', () => {
       const employee = JSON.parse(employeeResponse.body);
       expect(employee.empId).toBeDefined();
       expect(employee.empPerId).toBe(person.perId);
+
+      // Verify employee exists in database
+      const employeeExists = await verifyEmployeeExists(employee.empId, tenantId);
+      expect(employeeExists).toBe(true);
+      
+      const employeeCountAfter = await getEmployeeCount(tenantId);
+      expect(employeeCountAfter).toBe(initialEmployeeCount + 1);
 
       // 3. Create contract
       const contractResponse = await app.inject({
@@ -88,7 +117,14 @@ describe('Critical Flows Integration Tests', () => {
       const contract = JSON.parse(contractResponse.body);
       expect(contract.ctrId).toBeDefined();
 
-      // 4. Verify complete employee record
+      // Verify contract exists in database
+      const contractExists = await verifyContractExists(contract.ctrId, tenantId);
+      expect(contractExists).toBe(true);
+      
+      const contractCountAfter = await getContractCount(tenantId);
+      expect(contractCountAfter).toBe(initialContractCount + 1);
+
+      // 4. Verify complete employee record via API
       const employeeDetailResponse = await app.inject({
         method: 'GET',
         url: `/api/v1/people/employees/${employee.empId}`,
@@ -110,6 +146,10 @@ describe('Critical Flows Integration Tests', () => {
       const tenantA = 1;
       const tenantB = 2;
 
+      // Get initial counts
+      const initialCountA = await getEmployeeCount(tenantA);
+      const initialCountB = await getEmployeeCount(tenantB);
+
       // Create employee in Tenant A
       const person = await createTestPerson();
       const employeeResponseA = await app.inject({
@@ -121,7 +161,7 @@ describe('Critical Flows Integration Tests', () => {
         },
         payload: {
           personId: person.perId,
-          empEmployeeNumber: 'TENANT_A_EMP',
+          empEmployeeNumber: `TENANT_A_${Date.now()}`,
           empHireDate: '2024-01-01',
         },
       });
@@ -129,7 +169,19 @@ describe('Critical Flows Integration Tests', () => {
       expect(employeeResponseA.statusCode).toBe(201);
       const employeeA = JSON.parse(employeeResponseA.body);
 
-      // Try to access as Tenant B
+      // Verify employee exists in Tenant A database
+      const existsInA = await verifyEmployeeExists(employeeA.empId, tenantA);
+      expect(existsInA).toBe(true);
+      
+      const countAfterA = await getEmployeeCount(tenantA);
+      expect(countAfterA).toBe(initialCountA + 1);
+
+      // Verify tenant isolation in database
+      const isolation = await verifyTenantIsolation(employeeA.empId, tenantA, tenantB);
+      expect(isolation.existsInCorrectTenant).toBe(true);
+      expect(isolation.existsInWrongTenant).toBe(false);
+
+      // Try to access as Tenant B via API
       const accessResponse = await app.inject({
         method: 'GET',
         url: `/api/v1/people/employees/${employeeA.empId}`,
@@ -145,6 +197,10 @@ describe('Critical Flows Integration Tests', () => {
         const result = JSON.parse(accessResponse.body);
         expect(result).toBeNull();
       }
+      
+      // Verify Tenant B count didn't change
+      const countAfterB = await getEmployeeCount(tenantB);
+      expect(countAfterB).toBe(initialCountB);
     });
   });
 
@@ -161,13 +217,17 @@ describe('Critical Flows Integration Tests', () => {
         },
         payload: {
           personId: person.perId,
-          empEmployeeNumber: `EMP${Date.now()}`,
+          empEmployeeNumber: `STATUS_${Date.now()}`,
           empCurrentStatusCode: 'PLANNED',
         },
       });
 
       expect(employeeResponse.statusCode).toBe(201);
       const employee = JSON.parse(employeeResponse.body);
+
+      // Verify initial status history count (should have at least 1 for PLANNED)
+      const initialHistoryCount = await getStatusHistoryCount(employee.empId, tenantId);
+      expect(initialHistoryCount).toBeGreaterThanOrEqual(0);
 
       // Change status to ACTIVE
       const statusUpdateResponse = await app.inject({
@@ -185,7 +245,17 @@ describe('Critical Flows Integration Tests', () => {
 
       expect(statusUpdateResponse.statusCode).toBe(200);
 
-      // Get status history
+      // Verify status history was created in database
+      const finalHistoryCount = await getStatusHistoryCount(employee.empId, tenantId);
+      expect(finalHistoryCount).toBeGreaterThan(initialHistoryCount);
+
+      // Get status history from database directly
+      const dbHistory = await getStatusHistoryFromDb(employee.empId, tenantId);
+      expect(dbHistory.length).toBeGreaterThan(0);
+      expect(dbHistory.some((h) => h.eshStatusCode === 'ACTIVE')).toBe(true);
+      expect(dbHistory.some((h) => h.eshStatusCode === 'PLANNED')).toBe(true);
+
+      // Get status history via API
       const historyResponse = await app.inject({
         method: 'GET',
         url: `/api/v1/people/employees/${employee.empId}/status-history`,
@@ -199,6 +269,9 @@ describe('Critical Flows Integration Tests', () => {
       const history = JSON.parse(historyResponse.body);
       expect(history.length).toBeGreaterThan(0);
       expect(history.some((h: any) => h.eshStatusCode === 'ACTIVE')).toBe(true);
+      
+      // Verify API response matches database
+      expect(history.length).toBe(dbHistory.length);
     });
   });
 });

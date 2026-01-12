@@ -18,7 +18,21 @@ export async function registerContractRoutes(app: FastifyInstance) {
       schema: {
         description: 'Create employment contract',
         tags: ['People Core - Contract'],
-        body: contractCreateSchema,
+        body: {
+          type: 'object',
+          properties: {
+            ctrTenantId: { type: 'number' },
+            ctrEmpId: { type: 'number' },
+            ctrContractTypeCode: { type: 'string' },
+            ctrStartDate: { type: 'string', format: 'date' },
+            ctrEndDate: { type: 'string', format: 'date' },
+            ctrProbationEndDate: { type: 'string', format: 'date' },
+            ctrStandardHoursPerWeek: { type: 'number' },
+            ctrStandardDaysPerWeek: { type: 'number' },
+            ctrStatusCode: { type: 'string' },
+            ctrPrmPasId: { type: 'number' },
+          },
+        },
       },
     },
     async (request, reply) => {
@@ -81,7 +95,33 @@ export async function registerContractRoutes(app: FastifyInstance) {
         description: 'Update contract',
         tags: ['People Core - Contract'],
         params: { type: 'object', properties: { id: { type: 'number' } } },
-        body: contractUpdateSchema,
+        body: {
+          type: 'object',
+          properties: {
+            ctrContractTypeCode: { type: 'string' },
+            ctrStartDate: { type: 'string', format: 'date' },
+            ctrEndDate: { type: 'string', format: 'date' },
+            ctrProbationEndDate: { type: 'string', format: 'date' },
+            ctrStandardHoursPerWeek: { type: 'number' },
+            ctrStandardDaysPerWeek: { type: 'number' },
+            ctrStatusCode: { type: 'string' },
+            ctrPrmPasId: { type: 'number' },
+          },
+        },
+      },
+      preValidation: async (request: any, reply: any) => {
+        try {
+          contractUpdateSchema.parse(request.body);
+        } catch (error: any) {
+          if (error.name === 'ZodError') {
+            return reply.status(400).send({ 
+              error: 'Validation error',
+              details: error.errors 
+            });
+          }
+          throw error;
+        }
+      },
       },
     },
     async (request: any, reply) => {
