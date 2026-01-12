@@ -7,7 +7,8 @@ import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { EmployeeService } from '../employee.service.js';
 import { PersonRepository } from '../../repositories/person.repository.js';
 import { truncatePeopleTables } from '../../../../tests/helpers/test-db.js';
-import { createTestPerson } from '../../../../tests/helpers/test-factories.js';
+import { TestFactories } from '../../../../tests/helpers/test-factories.js';
+import { createTestPerson } from '../../../../tests/helpers/test-helpers.js';
 
 // Mock audit service
 vi.mock('../../../../core/audit/audit.service.js', () => ({
@@ -44,7 +45,7 @@ describe('EmployeeService', () => {
     });
 
     it('should create employee with existing person ID', async () => {
-      const person = await personRepo.create(createTestPerson());
+      const person = await personRepo.create(TestFactories.createPerson());
       const employee = await employeeService.create(
         { personId: person.perId, empEmployeeNumber: 'EMP002' },
         1,
@@ -55,8 +56,8 @@ describe('EmployeeService', () => {
     });
 
     it('should enforce unique employee number within tenant', async () => {
-      const person1 = await personRepo.create(createTestPerson());
-      const person2 = await personRepo.create(createTestPerson());
+      const person1 = await createTestPerson();
+      const person2 = await createTestPerson();
 
       await employeeService.create({ personId: person1.perId, empEmployeeNumber: 'EMP001' }, 1, 1);
 
@@ -66,7 +67,7 @@ describe('EmployeeService', () => {
     });
 
     it('should enforce one employee per person per tenant', async () => {
-      const person = await personRepo.create(createTestPerson());
+      const person = await personRepo.create(TestFactories.createPerson());
 
       await employeeService.create({ personId: person.perId, empEmployeeNumber: 'EMP001' }, 1, 1);
 
@@ -76,7 +77,7 @@ describe('EmployeeService', () => {
     });
 
     it('should create status history on employee creation', async () => {
-      const person = await personRepo.create(createTestPerson());
+      const person = await personRepo.create(TestFactories.createPerson());
       const employee = await employeeService.create(
         { personId: person.perId, empEmployeeNumber: 'EMP001', empCurrentStatusCode: 'ACTIVE' },
         1,
@@ -91,7 +92,7 @@ describe('EmployeeService', () => {
 
   describe('updateStatus', () => {
     it('should update status and create history entry', async () => {
-      const person = await personRepo.create(createTestPerson());
+      const person = await personRepo.create(TestFactories.createPerson());
       const employee = await employeeService.create(
         { personId: person.perId, empEmployeeNumber: 'EMP001' },
         1,

@@ -22,16 +22,46 @@ export async function registerWellnessProfileRoutes(app: FastifyInstance) {
       schema: {
         description: 'Create or update wellness profile (upsert)',
         tags: ['People Core - Wellness Profile'],
-        body: wellnessProfileUpsertSchema,
+        body: {
+          type: 'object',
+          required: ['wepTenantId', 'wepEmpId'],
+          properties: {
+            wepTenantId: { type: 'number' },
+            wepEmpId: { type: 'number' },
+            wepConsentFlag: { type: 'boolean' },
+            wepPreferredChannelCode: { type: 'string', enum: ['EMAIL', 'SMS', 'WHATSAPP', 'APP', 'OTHER'] },
+            wepLastZhepSyncAt: { type: 'string', format: 'date-time' },
+          },
+        },
+        preValidation: async (request: any, reply: any) => {
+          try {
+            wellnessProfileUpsertSchema.parse(request.body);
+          } catch (error: any) {
+            if (error.name === 'ZodError') {
+              return reply.status(400).send({ 
+                error: 'Validation error',
+                details: error.errors 
+              });
+            }
+            throw error;
+          }
+        },
       },
     },
     async (request, reply) => {
       try {
         const tenantId = requireTenant(request);
         const userId = requireUser(request);
-        const profile = await wellnessProfileService.upsert(request.body as any, userId);
+        const validatedBody = wellnessProfileUpsertSchema.parse(request.body);
+        const profile = await wellnessProfileService.upsert(validatedBody, userId);
         return reply.status(201).send(profile);
       } catch (error: any) {
+        if (error.name === 'ZodError') {
+          return reply.status(400).send({ 
+            error: 'Validation error',
+            details: error.errors 
+          });
+        }
         if (error.message.includes('required')) {
           return reply.status(400).send({ error: error.message });
         }
@@ -93,16 +123,43 @@ export async function registerWellnessProfileRoutes(app: FastifyInstance) {
         description: 'Update wellness profile',
         tags: ['People Core - Wellness Profile'],
         params: { type: 'object', properties: { id: { type: 'number' } } },
-        body: wellnessProfileUpdateSchema,
+        body: {
+          type: 'object',
+          properties: {
+            wepConsentFlag: { type: 'boolean' },
+            wepPreferredChannelCode: { type: 'string', enum: ['EMAIL', 'SMS', 'WHATSAPP', 'APP', 'OTHER'] },
+            wepLastZhepSyncAt: { type: 'string', format: 'date-time' },
+          },
+        },
+        preValidation: async (request: any, reply: any) => {
+          try {
+            wellnessProfileUpdateSchema.parse(request.body);
+          } catch (error: any) {
+            if (error.name === 'ZodError') {
+              return reply.status(400).send({ 
+                error: 'Validation error',
+                details: error.errors 
+              });
+            }
+            throw error;
+          }
+        },
       },
     },
     async (request: any, reply) => {
       try {
         const tenantId = requireTenant(request);
         const userId = requireUser(request);
-        const profile = await wellnessProfileService.update(Number(request.params.id), request.body as any, tenantId, userId);
+        const validatedBody = wellnessProfileUpdateSchema.parse(request.body);
+        const profile = await wellnessProfileService.update(Number(request.params.id), validatedBody, tenantId, userId);
         return reply.send(profile);
       } catch (error: any) {
+        if (error.name === 'ZodError') {
+          return reply.status(400).send({ 
+            error: 'Validation error',
+            details: error.errors 
+          });
+        }
         if (error.message.includes('not found')) {
           return reply.status(404).send({ error: error.message });
         }
@@ -118,7 +175,26 @@ export async function registerWellnessProfileRoutes(app: FastifyInstance) {
         description: 'Update wellness consent',
         tags: ['People Core - Wellness Profile'],
         params: { type: 'object', properties: { id: { type: 'number' } } },
-        body: wellnessProfileConsentUpdateSchema,
+        body: {
+          type: 'object',
+          required: ['wepConsentFlag'],
+          properties: {
+            wepConsentFlag: { type: 'boolean' },
+          },
+        },
+        preValidation: async (request: any, reply: any) => {
+          try {
+            wellnessProfileConsentUpdateSchema.parse(request.body);
+          } catch (error: any) {
+            if (error.name === 'ZodError') {
+              return reply.status(400).send({ 
+                error: 'Validation error',
+                details: error.errors 
+              });
+            }
+            throw error;
+          }
+        },
       },
     },
     async (request: any, reply) => {

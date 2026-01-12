@@ -18,18 +18,45 @@ export async function registerQualificationRoutes(app: FastifyInstance) {
         description: 'Create qualification',
         tags: ['People Core - Qualification'],
         params: { type: 'object', properties: { personId: { type: 'number' } } },
-        body: qualificationCreateSchema,
+        body: {
+          type: 'object',
+          required: ['qlfQualificationTypeCode', 'qlfQualificationName'],
+          properties: {
+            qlfQualificationTypeCode: { type: 'string', enum: ['EDUCATION', 'PROFESSIONAL', 'CERTIFICATION', 'OTHER'] },
+            qlfInstitution: { type: 'string', maxLength: 255 },
+            qlfQualificationName: { type: 'string', minLength: 1, maxLength: 255 },
+            qlfLevelCode: { type: 'string', enum: ['DIPLOMA', 'DEGREE', 'BACHELORS', 'MASTERS', 'DOCTORATE', 'CERTIFICATE', 'OTHER'] },
+            qlfCompletionYear: { type: 'number', minimum: 1900, maximum: 2100 },
+          },
+        },
+        preValidation: async (request: any, reply: any) => {
+          try {
+            qualificationCreateSchema.parse({ ...request.body, qlfPerId: Number(request.params.personId) });
+          } catch (error: any) {
+            if (error.name === 'ZodError') {
+              return reply.status(400).send({ 
+                error: 'Validation error',
+                details: error.errors 
+              });
+            }
+            throw error;
+          }
+        },
       },
     },
     async (request: any, reply) => {
       try {
         const userId = requireUser(request);
-        const qualification = await qualificationService.create(
-          { ...request.body, qlfPerId: Number(request.params.personId) } as any,
-          userId
-        );
+        const validatedBody = qualificationCreateSchema.parse({ ...request.body, qlfPerId: Number(request.params.personId) });
+        const qualification = await qualificationService.create(validatedBody, userId);
         return reply.status(201).send(qualification);
       } catch (error: any) {
+        if (error.name === 'ZodError') {
+          return reply.status(400).send({ 
+            error: 'Validation error',
+            details: error.errors 
+          });
+        }
         if (error.message.includes('required')) {
           return reply.status(400).send({ error: error.message });
         }
@@ -82,15 +109,44 @@ export async function registerQualificationRoutes(app: FastifyInstance) {
         description: 'Update qualification',
         tags: ['People Core - Qualification'],
         params: { type: 'object', properties: { id: { type: 'number' } } },
-        body: qualificationUpdateSchema,
+        body: {
+          type: 'object',
+          properties: {
+            qlfQualificationTypeCode: { type: 'string', enum: ['EDUCATION', 'PROFESSIONAL', 'CERTIFICATION', 'OTHER'] },
+            qlfInstitution: { type: 'string', maxLength: 255 },
+            qlfQualificationName: { type: 'string', minLength: 1, maxLength: 255 },
+            qlfLevelCode: { type: 'string', enum: ['DIPLOMA', 'DEGREE', 'BACHELORS', 'MASTERS', 'DOCTORATE', 'CERTIFICATE', 'OTHER'] },
+            qlfCompletionYear: { type: 'number', minimum: 1900, maximum: 2100 },
+          },
+        },
+        preValidation: async (request: any, reply: any) => {
+          try {
+            qualificationUpdateSchema.parse(request.body);
+          } catch (error: any) {
+            if (error.name === 'ZodError') {
+              return reply.status(400).send({ 
+                error: 'Validation error',
+                details: error.errors 
+              });
+            }
+            throw error;
+          }
+        },
       },
     },
     async (request: any, reply) => {
       try {
         const userId = requireUser(request);
-        const qualification = await qualificationService.update(Number(request.params.id), request.body as any, userId);
+        const validatedBody = qualificationUpdateSchema.parse(request.body);
+        const qualification = await qualificationService.update(Number(request.params.id), validatedBody, userId);
         return reply.send(qualification);
       } catch (error: any) {
+        if (error.name === 'ZodError') {
+          return reply.status(400).send({ 
+            error: 'Validation error',
+            details: error.errors 
+          });
+        }
         if (error.message.includes('not found')) {
           return reply.status(404).send({ error: error.message });
         }

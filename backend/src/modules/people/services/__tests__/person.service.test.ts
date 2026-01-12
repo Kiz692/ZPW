@@ -7,7 +7,8 @@ import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { PersonService } from '../person.service.js';
 import { PersonRepository } from '../../repositories/person.repository.js';
 import { truncatePeopleTables } from '../../../../tests/helpers/test-db.js';
-import { createTestPerson } from '../../../../tests/helpers/test-factories.js';
+import { TestFactories } from '../../../../tests/helpers/test-factories.js';
+import { createTestPerson } from '../../../../tests/helpers/test-helpers.js';
 
 // Mock audit service
 vi.mock('../../../../core/audit/audit.service.js', () => ({
@@ -47,7 +48,7 @@ describe('PersonService', () => {
 
   describe('getById', () => {
     it('should return person if found', async () => {
-      const created = await personRepo.create(createTestPerson());
+      const created = await personRepo.create(TestFactories.createPerson());
       const person = await personService.getById(created.perId);
 
       expect(person.perId).toBe(created.perId);
@@ -60,8 +61,8 @@ describe('PersonService', () => {
 
   describe('searchByName', () => {
     it('should search persons by name', async () => {
-      await personRepo.create(createTestPerson({ perFirstName: 'John', perLastName: 'Doe' }));
-      await personRepo.create(createTestPerson({ perFirstName: 'Jane', perLastName: 'Smith' }));
+      await createTestPerson({ perFirstName: 'John', perLastName: 'Doe' });
+      await createTestPerson({ perFirstName: 'Jane', perLastName: 'Smith' });
 
       const results = await personService.searchByName('John');
       expect(results.length).toBeGreaterThan(0);
@@ -74,7 +75,7 @@ describe('PersonService', () => {
 
   describe('update', () => {
     it('should update person', async () => {
-      const created = await personRepo.create(createTestPerson());
+      const created = await personRepo.create(TestFactories.createPerson());
       const updated = await personService.update(created.perId, { perFirstName: 'Jane' }, 1);
 
       expect(updated.perFirstName).toBe('Jane');
@@ -87,7 +88,7 @@ describe('PersonService', () => {
 
   describe('delete', () => {
     it('should soft delete person', async () => {
-      const created = await personRepo.create(createTestPerson());
+      const created = await personRepo.create(TestFactories.createPerson());
       const deleted = await personService.delete(created.perId, 1);
 
       expect(deleted).toBe(true);

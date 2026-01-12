@@ -19,19 +19,46 @@ export async function registerDependentRoutes(app: FastifyInstance) {
         description: 'Create dependent',
         tags: ['People Core - Dependent'],
         params: { type: 'object', properties: { employeeId: { type: 'number' } } },
-        body: dependentCreateSchema,
+        body: {
+          type: 'object',
+          required: ['depName', 'depRelationshipCode'],
+          properties: {
+            depName: { type: 'string', minLength: 1, maxLength: 255 },
+            depRelationshipCode: { type: 'string' },
+            depDateOfBirth: { type: 'string', format: 'date' },
+            depIncludedInHealthCover: { type: 'boolean' },
+            depWellnessEligible: { type: 'boolean' },
+          },
+        },
+        preValidation: async (request: any, reply: any) => {
+          try {
+            dependentCreateSchema.parse({ ...request.body, depTenantId: 1, depEmpId: Number(request.params.employeeId) });
+          } catch (error: any) {
+            if (error.name === 'ZodError') {
+              return reply.status(400).send({ 
+                error: 'Validation error',
+                details: error.errors 
+              });
+            }
+            throw error;
+          }
+        },
       },
     },
     async (request: any, reply) => {
       try {
         const tenantId = requireTenant(request);
         const userId = requireUser(request);
-        const dependent = await dependentService.create(
-          { ...request.body, depTenantId: tenantId, depEmpId: Number(request.params.employeeId) } as any,
-          userId
-        );
+        const validatedBody = dependentCreateSchema.parse({ ...request.body, depTenantId: tenantId, depEmpId: Number(request.params.employeeId) });
+        const dependent = await dependentService.create(validatedBody, userId);
         return reply.status(201).send(dependent);
       } catch (error: any) {
+        if (error.name === 'ZodError') {
+          return reply.status(400).send({ 
+            error: 'Validation error',
+            details: error.errors 
+          });
+        }
         if (error.message.includes('required')) {
           return reply.status(400).send({ error: error.message });
         }
@@ -86,16 +113,45 @@ export async function registerDependentRoutes(app: FastifyInstance) {
         description: 'Update dependent',
         tags: ['People Core - Dependent'],
         params: { type: 'object', properties: { id: { type: 'number' } } },
-        body: dependentUpdateSchema,
+        body: {
+          type: 'object',
+          properties: {
+            depName: { type: 'string', minLength: 1, maxLength: 255 },
+            depRelationshipCode: { type: 'string' },
+            depDateOfBirth: { type: 'string', format: 'date' },
+            depIncludedInHealthCover: { type: 'boolean' },
+            depWellnessEligible: { type: 'boolean' },
+          },
+        },
+        preValidation: async (request: any, reply: any) => {
+          try {
+            dependentUpdateSchema.parse(request.body);
+          } catch (error: any) {
+            if (error.name === 'ZodError') {
+              return reply.status(400).send({ 
+                error: 'Validation error',
+                details: error.errors 
+              });
+            }
+            throw error;
+          }
+        },
       },
     },
     async (request: any, reply) => {
       try {
         const tenantId = requireTenant(request);
         const userId = requireUser(request);
-        const dependent = await dependentService.update(Number(request.params.id), request.body as any, tenantId, userId);
+        const validatedBody = dependentUpdateSchema.parse(request.body);
+        const dependent = await dependentService.update(Number(request.params.id), validatedBody, tenantId, userId);
         return reply.send(dependent);
       } catch (error: any) {
+        if (error.name === 'ZodError') {
+          return reply.status(400).send({ 
+            error: 'Validation error',
+            details: error.errors 
+          });
+        }
         if (error.message.includes('not found')) {
           return reply.status(404).send({ error: error.message });
         }

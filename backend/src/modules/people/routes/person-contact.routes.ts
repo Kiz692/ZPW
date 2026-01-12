@@ -18,18 +18,44 @@ export async function registerPersonContactRoutes(app: FastifyInstance) {
         description: 'Create person contact',
         tags: ['People Core - Person Contact'],
         params: { type: 'object', properties: { personId: { type: 'number' } } },
-        body: personContactCreateSchema,
+        body: {
+          type: 'object',
+          properties: {
+            pcoContactTypeCode: { type: 'string', enum: ['EMAIL', 'MOBILE', 'PHONE', 'ADDRESS', 'OTHER'] },
+            pcoContactValue: { type: 'string', minLength: 1, maxLength: 255 },
+            pcoIsPrimary: { type: 'boolean' },
+            pcoLabel: { type: 'string', maxLength: 50 },
+            pcoCountryCode: { type: 'string', maxLength: 10 },
+          },
+        },
+        preValidation: async (request: any, reply: any) => {
+          try {
+            personContactCreateSchema.parse({ ...request.body, pcoPerId: Number(request.params.personId) });
+          } catch (error: any) {
+            if (error.name === 'ZodError') {
+              return reply.status(400).send({ 
+                error: 'Validation error',
+                details: error.errors 
+              });
+            }
+            throw error;
+          }
+        },
       },
     },
     async (request: any, reply) => {
       try {
         const userId = requireUser(request);
-        const contact = await contactService.create(
-          { ...request.body, pcoPerId: Number(request.params.personId) } as any,
-          userId
-        );
+        const validatedBody = personContactCreateSchema.parse({ ...request.body, pcoPerId: Number(request.params.personId) });
+        const contact = await contactService.create(validatedBody, userId);
         return reply.status(201).send(contact);
       } catch (error: any) {
+        if (error.name === 'ZodError') {
+          return reply.status(400).send({ 
+            error: 'Validation error',
+            details: error.errors 
+          });
+        }
         if (error.message.includes('Invalid') || error.message.includes('required')) {
           return reply.status(400).send({ error: error.message });
         }
@@ -82,15 +108,44 @@ export async function registerPersonContactRoutes(app: FastifyInstance) {
         description: 'Update contact',
         tags: ['People Core - Person Contact'],
         params: { type: 'object', properties: { id: { type: 'number' } } },
-        body: personContactUpdateSchema,
+        body: {
+          type: 'object',
+          properties: {
+            pcoContactTypeCode: { type: 'string', enum: ['EMAIL', 'MOBILE', 'PHONE', 'ADDRESS', 'OTHER'] },
+            pcoContactValue: { type: 'string', minLength: 1, maxLength: 255 },
+            pcoIsPrimary: { type: 'boolean' },
+            pcoLabel: { type: 'string', maxLength: 50 },
+            pcoCountryCode: { type: 'string', maxLength: 10 },
+          },
+        },
+        preValidation: async (request: any, reply: any) => {
+          try {
+            personContactUpdateSchema.parse(request.body);
+          } catch (error: any) {
+            if (error.name === 'ZodError') {
+              return reply.status(400).send({ 
+                error: 'Validation error',
+                details: error.errors 
+              });
+            }
+            throw error;
+          }
+        },
       },
     },
     async (request: any, reply) => {
       try {
         const userId = requireUser(request);
-        const contact = await contactService.update(Number(request.params.id), request.body as any, userId);
+        const validatedBody = personContactUpdateSchema.parse(request.body);
+        const contact = await contactService.update(Number(request.params.id), validatedBody, userId);
         return reply.send(contact);
       } catch (error: any) {
+        if (error.name === 'ZodError') {
+          return reply.status(400).send({ 
+            error: 'Validation error',
+            details: error.errors 
+          });
+        }
         if (error.message.includes('not found') || error.message.includes('Invalid')) {
           return reply.status(error.message.includes('not found') ? 404 : 400).send({ error: error.message });
         }

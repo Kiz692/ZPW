@@ -19,19 +19,44 @@ export async function registerWellnessProfileTagRoutes(app: FastifyInstance) {
         description: 'Create wellness profile tag',
         tags: ['People Core - Wellness Profile Tag'],
         params: { type: 'object', properties: { wellnessProfileId: { type: 'number' } } },
-        body: wellnessProfileTagCreateSchema,
+        body: {
+          type: 'object',
+          required: ['wptTagCode'],
+          properties: {
+            wptTagCode: { type: 'string', minLength: 1, maxLength: 100 },
+            wptSourceSystem: { type: 'string', enum: ['MANUAL', 'ZHEP', 'AUTO', 'OTHER'] },
+            wptIsActive: { type: 'boolean' },
+          },
+        },
+        preValidation: async (request: any, reply: any) => {
+          try {
+            wellnessProfileTagCreateSchema.parse({ ...request.body, wptTenantId: 1, wptWepId: Number(request.params.wellnessProfileId) });
+          } catch (error: any) {
+            if (error.name === 'ZodError') {
+              return reply.status(400).send({ 
+                error: 'Validation error',
+                details: error.errors 
+              });
+            }
+            throw error;
+          }
+        },
       },
     },
     async (request: any, reply) => {
       try {
         const tenantId = requireTenant(request);
         const userId = requireUser(request);
-        const tag = await tagService.create(
-          { ...request.body, wptTenantId: tenantId, wptWepId: Number(request.params.wellnessProfileId) } as any,
-          userId
-        );
+        const validatedBody = wellnessProfileTagCreateSchema.parse({ ...request.body, wptTenantId: tenantId, wptWepId: Number(request.params.wellnessProfileId) });
+        const tag = await tagService.create(validatedBody, userId);
         return reply.status(201).send(tag);
       } catch (error: any) {
+        if (error.name === 'ZodError') {
+          return reply.status(400).send({ 
+            error: 'Validation error',
+            details: error.errors 
+          });
+        }
         if (error.message.includes('already exists') || error.message.includes('required')) {
           return reply.status(400).send({ error: error.message });
         }
@@ -86,16 +111,43 @@ export async function registerWellnessProfileTagRoutes(app: FastifyInstance) {
         description: 'Update wellness profile tag',
         tags: ['People Core - Wellness Profile Tag'],
         params: { type: 'object', properties: { id: { type: 'number' } } },
-        body: wellnessProfileTagUpdateSchema,
+        body: {
+          type: 'object',
+          properties: {
+            wptTagCode: { type: 'string', minLength: 1, maxLength: 100 },
+            wptSourceSystem: { type: 'string', enum: ['MANUAL', 'ZHEP', 'AUTO', 'OTHER'] },
+            wptIsActive: { type: 'boolean' },
+          },
+        },
+        preValidation: async (request: any, reply: any) => {
+          try {
+            wellnessProfileTagUpdateSchema.parse(request.body);
+          } catch (error: any) {
+            if (error.name === 'ZodError') {
+              return reply.status(400).send({ 
+                error: 'Validation error',
+                details: error.errors 
+              });
+            }
+            throw error;
+          }
+        },
       },
     },
     async (request: any, reply) => {
       try {
         const tenantId = requireTenant(request);
         const userId = requireUser(request);
-        const tag = await tagService.update(Number(request.params.id), request.body as any, tenantId, userId);
+        const validatedBody = wellnessProfileTagUpdateSchema.parse(request.body);
+        const tag = await tagService.update(Number(request.params.id), validatedBody, tenantId, userId);
         return reply.send(tag);
       } catch (error: any) {
+        if (error.name === 'ZodError') {
+          return reply.status(400).send({ 
+            error: 'Validation error',
+            details: error.errors 
+          });
+        }
         if (error.message.includes('not found') || error.message.includes('already exists')) {
           return reply.status(error.message.includes('not found') ? 404 : 400).send({ error: error.message });
         }

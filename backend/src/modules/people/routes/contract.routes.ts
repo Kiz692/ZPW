@@ -122,7 +122,6 @@ export async function registerContractRoutes(app: FastifyInstance) {
           throw error;
         }
       },
-      },
     },
     async (request: any, reply) => {
       try {
