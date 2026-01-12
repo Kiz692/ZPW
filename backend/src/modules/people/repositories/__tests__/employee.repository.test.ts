@@ -94,7 +94,8 @@ describe('EmployeeRepository', () => {
       const updated = await employeeRepo.updateStatus(employee.empId, 'PROBATION', effectiveDate, 1);
 
       expect(updated?.empCurrentStatusCode).toBe('PROBATION');
-      expect(updated?.empCurrentStatusEffectiveDate).toEqual(effectiveDate);
+      // Compare timestamps to avoid timezone/format issues
+      expect(updated?.empCurrentStatusEffectiveDate?.getTime()).toBe(effectiveDate.getTime());
     });
   });
 });

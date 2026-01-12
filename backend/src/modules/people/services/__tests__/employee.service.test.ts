@@ -8,6 +8,7 @@ import { EmployeeService } from '../employee.service.js';
 import { PersonRepository } from '../../repositories/person.repository.js';
 import { truncatePeopleTables } from '../../../../tests/helpers/test-db.js';
 import { TestFactories } from '../../../../tests/helpers/test-factories.js';
+import { createTestPerson } from '../../../../tests/helpers/test-helpers.js';
 
 // Mock audit service
 vi.mock('../../../../core/audit/audit.service.js', () => ({
@@ -55,8 +56,8 @@ describe('EmployeeService', () => {
     });
 
     it('should enforce unique employee number within tenant', async () => {
-      const person1 = await personRepo.create(createTestPerson());
-      const person2 = await personRepo.create(createTestPerson());
+      const person1 = await createTestPerson();
+      const person2 = await createTestPerson();
 
       await employeeService.create({ personId: person1.perId, empEmployeeNumber: 'EMP001' }, 1, 1);
 

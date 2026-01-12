@@ -8,6 +8,7 @@ import { PersonService } from '../person.service.js';
 import { PersonRepository } from '../../repositories/person.repository.js';
 import { truncatePeopleTables } from '../../../../tests/helpers/test-db.js';
 import { TestFactories } from '../../../../tests/helpers/test-factories.js';
+import { createTestPerson } from '../../../../tests/helpers/test-helpers.js';
 
 // Mock audit service
 vi.mock('../../../../core/audit/audit.service.js', () => ({
@@ -60,8 +61,8 @@ describe('PersonService', () => {
 
   describe('searchByName', () => {
     it('should search persons by name', async () => {
-      await personRepo.create(createTestPerson({ perFirstName: 'John', perLastName: 'Doe' }));
-      await personRepo.create(createTestPerson({ perFirstName: 'Jane', perLastName: 'Smith' }));
+      await createTestPerson({ perFirstName: 'John', perLastName: 'Doe' });
+      await createTestPerson({ perFirstName: 'Jane', perLastName: 'Smith' });
 
       const results = await personService.searchByName('John');
       expect(results.length).toBeGreaterThan(0);
