@@ -1,17 +1,21 @@
 version: '3.8'
 
+# Docker Compose automatically loads .env file from the same directory
+# Environment variables can be referenced using ${VARIABLE_NAME} syntax
+# Default values can be provided using ${VARIABLE_NAME:-default_value}
+
 services:
   # PostgreSQL Database
   postgres:
     image: postgres:16-alpine
     container_name: zpw-postgres
     environment:
-      POSTGRES_USER: zpw_user
-      POSTGRES_PASSWORD: zpw_dev_password
-      POSTGRES_DB: zpw_db
+      POSTGRES_USER: ${POSTGRES_USER:-zpw_user}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-zpw_dev_password}
+      POSTGRES_DB: ${POSTGRES_DB:-zpw_db}
       PGDATA: /var/lib/postgresql/data/pgdata
     ports:
-      - "5432:5432"  # If port conflict, change to "15432:5432" and update DATABASE_URL
+      - "${POSTGRES_PORT:-5432}:5432"  # If port conflict, change to "15432:5432" and update DATABASE_URL
     volumes:
       - postgres_data:/var/lib/postgresql/data
       # Mount init scripts if needed
@@ -30,7 +34,7 @@ services:
     image: redis:7-alpine
     container_name: zpw-redis
     ports:
-      - "6379:6379"  # If port conflict, change to "16379:6379" and update REDIS_URL
+      - "${REDIS_PORT:-6379}:6379"  # If port conflict, change to "16379:6379" and update REDIS_URL
     volumes:
       - redis_data:/data
     command: redis-server --appendonly yes

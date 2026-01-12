@@ -7,7 +7,7 @@ import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { buildApp } from '../../../../app.js';
 import type { FastifyInstance } from 'fastify';
 import { truncatePeopleTables } from '../../../../tests/helpers/test-db.js';
-import { createTestPersonInDb, createTestEmployeeWithPerson } from '../../../../tests/helpers/test-helpers.js';
+import { createTestPerson, createTestEmployee } from '../../../../tests/helpers/test-helpers.js';
 
 describe('Employee API Routes - Critical Flows', () => {
   let app: FastifyInstance;
@@ -85,12 +85,12 @@ describe('Employee API Routes - Critical Flows', () => {
   describe('Critical Flow 2: Tenant Isolation Flow', () => {
     it('should enforce tenant isolation - Tenant A cannot see Tenant B data', async () => {
       // Create employee in Tenant A
-      const personA = await createTestPersonInDb(1);
-      const employeeA = await createTestEmployeeWithPerson(1, 1);
+      const personA = await createTestPerson();
+      const employeeA = await createTestEmployee(1, personA.perId);
 
       // Create employee in Tenant B
-      const personB = await createTestPersonInDb(1);
-      const employeeB = await createTestEmployeeWithPerson(2, 1);
+      const personB = await createTestPerson();
+      const employeeB = await createTestEmployee(2, personB.perId);
 
       // Query as Tenant A
       const tenantAResponse = await app.inject({
@@ -105,12 +105,12 @@ describe('Employee API Routes - Critical Flows', () => {
       expect(tenantAResponse.statusCode).toBe(200);
       const tenantAEmployees = JSON.parse(tenantAResponse.body);
       expect(tenantAEmployees.length).toBe(1);
-      expect(tenantAEmployees[0].empId).toBe(employeeA.employee.empId);
+      expect(tenantAEmployees[0].empId).toBe(employeeA.empId);
 
       // Try to access Tenant B employee as Tenant A
       const crossTenantResponse = await app.inject({
         method: 'GET',
-        url: `/api/v1/people/employees/${employeeB.employee.empId}`,
+        url: `/api/v1/people/employees/${employeeB.empId}`,
         headers: {
           'x-user-id': '1',
           'x-tenant-id': '1',
@@ -124,7 +124,8 @@ describe('Employee API Routes - Critical Flows', () => {
   describe('Critical Flow 3: Status History Flow', () => {
     it('should create employee → change status → verify history recorded', async () => {
       // Create employee
-      const { employee } = await createTestEmployeeWithPerson(1, 1);
+      const person = await createTestPerson();
+      const employee = await createTestEmployee(1, person.perId);
 
       // Change status
       const statusResponse = await app.inject({

@@ -6,7 +6,7 @@
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { PersonRepository } from '../person.repository.js';
 import { truncatePeopleTables } from '../../../../tests/helpers/test-db.js';
-import { createTestPerson } from '../../../../tests/helpers/test-factories.js';
+import { TestFactories } from '../../../../tests/helpers/test-factories.js';
 
 describe('PersonRepository', () => {
   const personRepo = new PersonRepository();
@@ -21,7 +21,7 @@ describe('PersonRepository', () => {
 
   describe('create', () => {
     it('should create a person with all required fields', async () => {
-      const personData = createTestPerson();
+      const personData = TestFactories.createPerson();
       const person = await personRepo.create(personData);
 
       expect(person.perId).toBeDefined();
@@ -41,7 +41,7 @@ describe('PersonRepository', () => {
 
   describe('findById', () => {
     it('should find person by ID', async () => {
-      const personData = createTestPerson();
+      const personData = TestFactories.createPerson();
       const created = await personRepo.create(personData);
       const found = await personRepo.findById(created.perId);
 
@@ -55,7 +55,7 @@ describe('PersonRepository', () => {
     });
 
     it('should not return soft-deleted person', async () => {
-      const personData = createTestPerson();
+      const personData = TestFactories.createPerson();
       const created = await personRepo.create(personData);
       await personRepo.softDelete(created.perId);
       const found = await personRepo.findById(created.perId);
@@ -86,7 +86,7 @@ describe('PersonRepository', () => {
 
   describe('update', () => {
     it('should update person fields', async () => {
-      const personData = createTestPerson();
+      const personData = TestFactories.createPerson();
       const created = await personRepo.create(personData);
       const updated = await personRepo.update(created.perId, { perFirstName: 'Jane' });
 
@@ -95,7 +95,7 @@ describe('PersonRepository', () => {
     });
 
     it('should auto-update display name when name changes', async () => {
-      const personData = createTestPerson();
+      const personData = TestFactories.createPerson();
       const created = await personRepo.create(personData);
       const updated = await personRepo.update(created.perId, { perFirstName: 'Jane' });
 
@@ -105,7 +105,7 @@ describe('PersonRepository', () => {
 
   describe('softDelete', () => {
     it('should soft delete person', async () => {
-      const personData = createTestPerson();
+      const personData = TestFactories.createPerson();
       const created = await personRepo.create(personData);
       const deleted = await personRepo.softDelete(created.perId);
 

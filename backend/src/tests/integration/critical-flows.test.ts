@@ -15,6 +15,7 @@ import {
   verifyPersonExists,
   verifyContractExists,
   verifyTenantIsolation,
+  getPersonCount,
   getEmployeeCount,
   getContractCount,
   getStatusHistoryCount,
