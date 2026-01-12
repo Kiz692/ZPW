@@ -41,6 +41,7 @@ describe('Employee API Routes - Critical Flows', () => {
 
       expect(personResponse.statusCode).toBe(201);
       const person = JSON.parse(personResponse.body);
+      expect(person).toBeDefined();
       expect(person.perId).toBeDefined();
 
       // Step 2: Create employee
@@ -76,7 +77,7 @@ describe('Employee API Routes - Critical Flows', () => {
       });
 
       expect(detailResponse.statusCode).toBe(200);
-      const employeeDetail = JSON.parse(detailResponse.body);
+      const employeeDetail = detailResponse.json();
       expect(employeeDetail.empId).toBe(employee.empId);
       expect(employeeDetail.empEmployeeNumber).toBe('EMP001');
     });
@@ -103,7 +104,7 @@ describe('Employee API Routes - Critical Flows', () => {
       });
 
       expect(tenantAResponse.statusCode).toBe(200);
-      const tenantAEmployees = JSON.parse(tenantAResponse.body);
+      const tenantAEmployees = tenantAResponse.json();
       expect(tenantAEmployees.length).toBe(1);
       expect(tenantAEmployees[0].empId).toBe(employeeA.empId);
 
@@ -143,7 +144,10 @@ describe('Employee API Routes - Critical Flows', () => {
       });
 
       expect(statusResponse.statusCode).toBe(200);
-      const updatedEmployee = JSON.parse(statusResponse.body);
+      const statusBody = statusResponse.body;
+      expect(statusBody).toBeDefined();
+      const updatedEmployee = typeof statusBody === 'string' ? JSON.parse(statusBody) : statusBody;
+      expect(updatedEmployee).toBeDefined();
       expect(updatedEmployee.empCurrentStatusCode).toBe('PROBATION');
 
       // Verify status history
@@ -157,7 +161,7 @@ describe('Employee API Routes - Critical Flows', () => {
       });
 
       expect(historyResponse.statusCode).toBe(200);
-      const history = JSON.parse(historyResponse.body);
+      const history = historyResponse.json();
       expect(history.length).toBeGreaterThanOrEqual(2);
       expect(history.some((h: any) => h.eshStatusCode === 'PROBATION')).toBe(true);
     });

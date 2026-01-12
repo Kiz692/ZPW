@@ -18,18 +18,45 @@ export async function registerEmploymentHistoryRoutes(app: FastifyInstance) {
         description: 'Create employment history',
         tags: ['People Core - Employment History'],
         params: { type: 'object', properties: { personId: { type: 'number' } } },
-        body: employmentHistoryCreateSchema,
+        body: {
+          type: 'object',
+          required: ['pehEmployerName'],
+          properties: {
+            pehEmployerName: { type: 'string', minLength: 1, maxLength: 255 },
+            pehRoleTitle: { type: 'string', maxLength: 255 },
+            pehStartDate: { type: 'string', format: 'date' },
+            pehEndDate: { type: 'string', format: 'date' },
+            pehSummary: { type: 'string' },
+          },
+        },
+        preValidation: async (request: any, reply: any) => {
+          try {
+            employmentHistoryCreateSchema.parse({ ...request.body, pehPerId: Number(request.params.personId) });
+          } catch (error: any) {
+            if (error.name === 'ZodError') {
+              return reply.status(400).send({ 
+                error: 'Validation error',
+                details: error.errors 
+              });
+            }
+            throw error;
+          }
+        },
       },
     },
     async (request: any, reply) => {
       try {
         const userId = requireUser(request);
-        const history = await historyService.create(
-          { ...request.body, pehPerId: Number(request.params.personId) } as any,
-          userId
-        );
+        const validatedBody = employmentHistoryCreateSchema.parse({ ...request.body, pehPerId: Number(request.params.personId) });
+        const history = await historyService.create(validatedBody, userId);
         return reply.status(201).send(history);
       } catch (error: any) {
+        if (error.name === 'ZodError') {
+          return reply.status(400).send({ 
+            error: 'Validation error',
+            details: error.errors 
+          });
+        }
         if (error.message.includes('date') || error.message.includes('required')) {
           return reply.status(400).send({ error: error.message });
         }
@@ -82,15 +109,44 @@ export async function registerEmploymentHistoryRoutes(app: FastifyInstance) {
         description: 'Update employment history',
         tags: ['People Core - Employment History'],
         params: { type: 'object', properties: { id: { type: 'number' } } },
-        body: employmentHistoryUpdateSchema,
+        body: {
+          type: 'object',
+          properties: {
+            pehEmployerName: { type: 'string', minLength: 1, maxLength: 255 },
+            pehRoleTitle: { type: 'string', maxLength: 255 },
+            pehStartDate: { type: 'string', format: 'date' },
+            pehEndDate: { type: 'string', format: 'date' },
+            pehSummary: { type: 'string' },
+          },
+        },
+        preValidation: async (request: any, reply: any) => {
+          try {
+            employmentHistoryUpdateSchema.parse(request.body);
+          } catch (error: any) {
+            if (error.name === 'ZodError') {
+              return reply.status(400).send({ 
+                error: 'Validation error',
+                details: error.errors 
+              });
+            }
+            throw error;
+          }
+        },
       },
     },
     async (request: any, reply) => {
       try {
         const userId = requireUser(request);
-        const history = await historyService.update(Number(request.params.id), request.body as any, userId);
+        const validatedBody = employmentHistoryUpdateSchema.parse(request.body);
+        const history = await historyService.update(Number(request.params.id), validatedBody, userId);
         return reply.send(history);
       } catch (error: any) {
+        if (error.name === 'ZodError') {
+          return reply.status(400).send({ 
+            error: 'Validation error',
+            details: error.errors 
+          });
+        }
         if (error.message.includes('not found') || error.message.includes('date')) {
           return reply.status(error.message.includes('not found') ? 404 : 400).send({ error: error.message });
         }

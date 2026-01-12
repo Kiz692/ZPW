@@ -273,10 +273,12 @@ export async function registerEmployeeRoutes(app: FastifyInstance) {
         const tenantId = requireTenant(request);
         const userId = requireUser(request);
         const { statusCode, effectiveDate, reasonCode, reasonNote } = request.body as any;
+        // Convert string date to Date object
+        const effectiveDateObj = effectiveDate ? new Date(effectiveDate) : new Date();
         const employee = await employeeService.updateStatus(
           Number(request.params.id),
           statusCode,
-          effectiveDate,
+          effectiveDateObj,
           reasonCode,
           reasonNote,
           tenantId,

@@ -47,6 +47,12 @@ describe('Critical Flows Integration Tests', () => {
       const initialContractCount = await getContractCount(tenantId);
 
       // 1. Create person
+      const personData = TestFactories.createPerson();
+      // Convert Date objects to strings for API
+      const personPayload = {
+        ...personData,
+        perDateOfBirth: personData.perDateOfBirth ? personData.perDateOfBirth.toISOString().split('T')[0] : undefined,
+      };
       const personResponse = await app.inject({
         method: 'POST',
         url: '/api/v1/people/persons',
@@ -54,11 +60,12 @@ describe('Critical Flows Integration Tests', () => {
           'X-Tenant-ID': String(tenantId),
           'X-User-ID': String(userId),
         },
-        payload: TestFactories.createPerson(),
+        payload: personPayload,
       });
 
       expect(personResponse.statusCode).toBe(201);
       const person = JSON.parse(personResponse.body);
+      expect(person).toBeDefined();
       expect(person.perId).toBeDefined();
 
       // Verify person exists in database
@@ -115,7 +122,7 @@ describe('Critical Flows Integration Tests', () => {
       });
 
       expect(contractResponse.statusCode).toBe(201);
-      const contract = JSON.parse(contractResponse.body);
+      const contract = contractResponse.json();
       expect(contract.ctrId).toBeDefined();
 
       // Verify contract exists in database
@@ -136,7 +143,7 @@ describe('Critical Flows Integration Tests', () => {
       });
 
       expect(employeeDetailResponse.statusCode).toBe(200);
-      const employeeDetail = JSON.parse(employeeDetailResponse.body);
+      const employeeDetail = employeeDetailResponse.json();
       expect(employeeDetail.empId).toBe(employee.empId);
       expect(employeeDetail.empPerId).toBe(person.perId);
     });
@@ -169,6 +176,7 @@ describe('Critical Flows Integration Tests', () => {
 
       expect(employeeResponseA.statusCode).toBe(201);
       const employeeA = JSON.parse(employeeResponseA.body);
+      expect(employeeA.empId).toBeDefined();
 
       // Verify employee exists in Tenant A database
       const existsInA = await verifyEmployeeExists(employeeA.empId, tenantA);
@@ -195,7 +203,7 @@ describe('Critical Flows Integration Tests', () => {
       // Should not find the employee (404 or empty result)
       expect([404, 200]).toContain(accessResponse.statusCode);
       if (accessResponse.statusCode === 200) {
-        const result = JSON.parse(accessResponse.body);
+        const result = accessResponse.json();
         expect(result).toBeNull();
       }
       
@@ -225,12 +233,15 @@ describe('Critical Flows Integration Tests', () => {
 
       expect(employeeResponse.statusCode).toBe(201);
       const employee = JSON.parse(employeeResponse.body);
+      expect(employee.empId).toBeDefined();
 
       // Verify initial status history count (should have at least 1 for PLANNED)
       const initialHistoryCount = await getStatusHistoryCount(employee.empId, tenantId);
       expect(initialHistoryCount).toBeGreaterThanOrEqual(0);
 
       // Change status to ACTIVE
+      // Ensure employee.empId is defined
+      expect(employee.empId).toBeDefined();
       const statusUpdateResponse = await app.inject({
         method: 'PATCH',
         url: `/api/v1/people/employees/${employee.empId}/status`,
@@ -245,6 +256,9 @@ describe('Critical Flows Integration Tests', () => {
       });
 
       expect(statusUpdateResponse.statusCode).toBe(200);
+      // Verify the response contains the updated employee
+      const updatedEmployee = statusUpdateResponse.json();
+      expect(updatedEmployee.empCurrentStatusCode).toBe('ACTIVE');
 
       // Verify status history was created in database
       const finalHistoryCount = await getStatusHistoryCount(employee.empId, tenantId);
@@ -267,7 +281,7 @@ describe('Critical Flows Integration Tests', () => {
       });
 
       expect(historyResponse.statusCode).toBe(200);
-      const history = JSON.parse(historyResponse.body);
+      const history = historyResponse.json();
       expect(history.length).toBeGreaterThan(0);
       expect(history.some((h: any) => h.eshStatusCode === 'ACTIVE')).toBe(true);
       
