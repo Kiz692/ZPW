@@ -3,8 +3,12 @@
  * Provides common business logic, validation helpers, and audit event recording
  */
 
-import { recordAuditEvent } from '../../../core/audit/audit.service.js';
-import { AuditAction, AuditActorType, AuditEntityType } from '../../../core/audit/types.js';
+import { recordAuditEvent } from "../../../core/audit/audit.service.js";
+import {
+  AuditAction,
+  AuditActorType,
+  AuditEntityType,
+} from "../../../core/audit/types.js";
 
 export abstract class BaseService {
   /**
@@ -16,7 +20,7 @@ export abstract class BaseService {
     entityId: number,
     tenantId?: number,
     userId?: number,
-    metadata?: Record<string, unknown>
+    metadata?: Record<string, unknown>,
   ): Promise<void> {
     await recordAuditEvent({
       tenantId,
@@ -34,11 +38,13 @@ export abstract class BaseService {
    */
   protected validateRequired<T extends Record<string, unknown>>(
     data: T,
-    fields: (keyof T)[]
+    fields: (keyof T)[],
   ): void {
-    const missing = fields.filter((field) => data[field] === undefined || data[field] === null);
+    const missing = fields.filter(
+      (field) => data[field] === undefined || data[field] === null,
+    );
     if (missing.length > 0) {
-      throw new Error(`Missing required fields: ${missing.join(', ')}`);
+      throw new Error(`Missing required fields: ${missing.join(", ")}`);
     }
   }
 
@@ -47,7 +53,7 @@ export abstract class BaseService {
    */
   protected validateDateRange(startDate: Date, endDate?: Date): void {
     if (endDate && startDate > endDate) {
-      throw new Error('Start date must be before or equal to end date');
+      throw new Error("Start date must be before or equal to end date");
     }
   }
 
@@ -56,7 +62,7 @@ export abstract class BaseService {
    */
   protected async checkUnique<T>(
     checkFn: () => Promise<T | null>,
-    errorMessage: string
+    errorMessage: string,
   ): Promise<void> {
     const existing = await checkFn();
     if (existing) {

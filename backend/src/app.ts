@@ -1,11 +1,11 @@
-import Fastify from 'fastify';
-import cors from '@fastify/cors';
-import helmet from '@fastify/helmet';
-import swagger from '@fastify/swagger';
-import swaggerUi from '@fastify/swagger-ui';
+import Fastify from "fastify";
+import cors from "@fastify/cors";
+import helmet from "@fastify/helmet";
+import swagger from "@fastify/swagger";
+import swaggerUi from "@fastify/swagger-ui";
 
-import { registerHealthRoutes } from './core/health/routes.js';
-import { registerPeopleRoutes } from './modules/people/routes/index.js';
+import { registerHealthRoutes } from "./core/health/routes.js";
+import { registerPeopleRoutes } from "./modules/people/routes/index.js";
 
 type DbClient = {
   query: (sql: string) => Promise<unknown>;
@@ -22,14 +22,14 @@ export async function buildApp(dbClient?: DbClient) {
   await app.register(swagger, {
     openapi: {
       info: {
-        title: 'ZPW Core API',
-        version: '0.1.0',
+        title: "ZPW Core API",
+        version: "0.1.0",
       },
     },
   });
 
   await app.register(swaggerUi, {
-    routePrefix: '/api-docs',
+    routePrefix: "/api-docs",
   });
 
   await registerHealthRoutes(app, dbClient);

@@ -3,9 +3,9 @@
  * Business logic for dependent management
  */
 
-import { DependentRepository } from '../repositories/dependent.repository.js';
-import { BaseService } from './base.service.js';
-import { AuditAction, AuditEntityType } from '../../../core/audit/types.js';
+import { DependentRepository } from "../repositories/dependent.repository.js";
+import { BaseService } from "./base.service.js";
+import { AuditAction, AuditEntityType } from "../../../core/audit/types.js";
 
 export class DependentService extends BaseService {
   private dependentRepo = new DependentRepository();
@@ -20,18 +20,22 @@ export class DependentService extends BaseService {
       depIncludedInHealthCover?: boolean;
       depWellnessEligible?: boolean;
     },
-    userId?: number
+    userId?: number,
   ) {
-    this.validateRequired(data, ['depTenantId', 'depEmpId', 'depRelationshipCode']);
+    this.validateRequired(data, [
+      "depTenantId",
+      "depEmpId",
+      "depRelationshipCode",
+    ]);
 
     const dependent = await this.dependentRepo.create(data, userId);
-    
+
     await this.recordAudit(
       AuditAction.DEP_CREATED,
       AuditEntityType.DEPENDENT,
       dependent.depId,
       data.depTenantId,
-      userId
+      userId,
     );
 
     return dependent;
@@ -59,7 +63,7 @@ export class DependentService extends BaseService {
       depWellnessEligible?: boolean;
     },
     tenantId: number,
-    userId?: number
+    userId?: number,
   ) {
     const existing = await this.dependentRepo.findById(id, tenantId);
     if (!existing) {
@@ -67,14 +71,14 @@ export class DependentService extends BaseService {
     }
 
     const updated = await this.dependentRepo.update(id, data, tenantId, userId);
-    
+
     await this.recordAudit(
       AuditAction.DEP_UPDATED,
       AuditEntityType.DEPENDENT,
       id,
       tenantId,
       userId,
-      { changes: data }
+      { changes: data },
     );
 
     return updated!;
@@ -87,13 +91,13 @@ export class DependentService extends BaseService {
     }
 
     const deleted = await this.dependentRepo.softDelete(id, tenantId, userId);
-    
+
     await this.recordAudit(
       AuditAction.DEP_DELETED,
       AuditEntityType.DEPENDENT,
       id,
       tenantId,
-      userId
+      userId,
     );
 
     return deleted;

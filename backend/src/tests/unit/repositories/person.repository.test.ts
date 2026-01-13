@@ -2,12 +2,12 @@
  * Person Repository Unit Tests
  */
 
-import { describe, it, expect, beforeEach, afterEach } from 'vitest';
-import { PersonRepository } from '../../../modules/people/repositories/person.repository.js';
-import { setupTestDb, teardownTestDb, cleanupTestDb } from '../../helpers/test-db.js';
-import { TestFactories } from '../../helpers/test-factories.js';
+import { describe, it, expect, beforeEach, afterEach } from "vitest";
+import { PersonRepository } from "../../../modules/people/repositories/person.repository.js";
+import { setupTestDb, cleanupTestDb } from "../../helpers/test-db.js";
+import { TestFactories } from "../../helpers/test-factories.js";
 
-describe('PersonRepository', () => {
+describe("PersonRepository", () => {
   let personRepo: PersonRepository;
 
   beforeEach(async () => {
@@ -20,8 +20,8 @@ describe('PersonRepository', () => {
     await cleanupTestDb();
   });
 
-  describe('create', () => {
-    it('should create a person with all required fields', async () => {
+  describe("create", () => {
+    it("should create a person with all required fields", async () => {
       const personData = TestFactories.createPerson();
       const person = await personRepo.create(personData);
 
@@ -32,8 +32,10 @@ describe('PersonRepository', () => {
       expect(person.perCreatedAt).toBeDefined();
     });
 
-    it('should auto-generate display name if not provided', async () => {
-      const personData = TestFactories.createPerson({ perDisplayName: undefined });
+    it("should auto-generate display name if not provided", async () => {
+      const personData = TestFactories.createPerson({
+        perDisplayName: undefined,
+      });
       const person = await personRepo.create(personData);
 
       expect(person.perDisplayName).toContain(personData.perFirstName);
@@ -41,8 +43,8 @@ describe('PersonRepository', () => {
     });
   });
 
-  describe('findById', () => {
-    it('should find person by ID', async () => {
+  describe("findById", () => {
+    it("should find person by ID", async () => {
       const personData = TestFactories.createPerson();
       const created = await personRepo.create(personData);
       const found = await personRepo.findById(created.perId);
@@ -51,35 +53,47 @@ describe('PersonRepository', () => {
       expect(found?.perId).toBe(created.perId);
     });
 
-    it('should return null for non-existent person', async () => {
+    it("should return null for non-existent person", async () => {
       const found = await personRepo.findById(99999);
       expect(found).toBeNull();
     });
   });
 
-  describe('searchByName', () => {
-    it('should find persons by name', async () => {
-      await personRepo.create(TestFactories.createPerson({ perFirstName: 'John', perLastName: 'Doe' }));
-      await personRepo.create(TestFactories.createPerson({ perFirstName: 'Jane', perLastName: 'Smith' }));
+  describe("searchByName", () => {
+    it("should find persons by name", async () => {
+      await personRepo.create(
+        TestFactories.createPerson({
+          perFirstName: "John",
+          perLastName: "Doe",
+        }),
+      );
+      await personRepo.create(
+        TestFactories.createPerson({
+          perFirstName: "Jane",
+          perLastName: "Smith",
+        }),
+      );
 
-      const results = await personRepo.searchByName('John');
+      const results = await personRepo.searchByName("John");
       expect(results.length).toBeGreaterThan(0);
-      expect(results[0].perFirstName).toContain('John');
+      expect(results[0].perFirstName).toContain("John");
     });
   });
 
-  describe('update', () => {
-    it('should update person', async () => {
+  describe("update", () => {
+    it("should update person", async () => {
       const person = await personRepo.create(TestFactories.createPerson());
-      const updated = await personRepo.update(person.perId, { perFirstName: 'Updated' });
+      const updated = await personRepo.update(person.perId, {
+        perFirstName: "Updated",
+      });
 
-      expect(updated?.perFirstName).toBe('Updated');
+      expect(updated?.perFirstName).toBe("Updated");
       expect(updated?.perUpdatedAt).toBeDefined();
     });
   });
 
-  describe('softDelete', () => {
-    it('should soft delete person', async () => {
+  describe("softDelete", () => {
+    it("should soft delete person", async () => {
       const person = await personRepo.create(TestFactories.createPerson());
       const deleted = await personRepo.softDelete(person.perId);
 

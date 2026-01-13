@@ -3,10 +3,10 @@
  * Data access layer for PID_PERSON table (global entity, no tenant)
  */
 
-import { and, eq, isNull, like, or } from 'drizzle-orm';
-import { db } from '../../../core/db/client.js';
-import { pidPerson } from '../../../core/db/schema/people.js';
-import { BaseRepository } from './base.repository.js';
+import { and, eq, isNull, like, or } from "drizzle-orm";
+import { db } from "../../../core/db/client.js";
+import { pidPerson } from "../../../core/db/schema/people.js";
+import { BaseRepository } from "./base.repository.js";
 
 export type Person = typeof pidPerson.$inferSelect;
 export type PersonInsert = typeof pidPerson.$inferInsert;
@@ -19,7 +19,7 @@ export class PersonRepository extends BaseRepository<
   PersonUpdate
 > {
   constructor() {
-    super(pidPerson, 'perId', undefined, 'perDeletedAt');
+    super(pidPerson, "perId", undefined, "perDeletedAt");
   }
 
   /**
@@ -60,7 +60,7 @@ export class PersonRepository extends BaseRepository<
    */
   async searchByName(searchTerm: string, limit = 50): Promise<Person[]> {
     const searchPattern = `%${searchTerm}%`;
-    
+
     return await db
       .select()
       .from(pidPerson)
@@ -70,9 +70,9 @@ export class PersonRepository extends BaseRepository<
           or(
             like(pidPerson.perFirstName, searchPattern),
             like(pidPerson.perLastName, searchPattern),
-            like(pidPerson.perDisplayName, searchPattern)
-          )
-        )
+            like(pidPerson.perDisplayName, searchPattern),
+          ),
+        ),
       )
       .limit(limit);
   }
@@ -82,10 +82,11 @@ export class PersonRepository extends BaseRepository<
    */
   async create(data: PersonInsert, userId?: number): Promise<Person> {
     const now = new Date();
-    
+
     // Auto-generate display name if not provided
-    const displayName = data.perDisplayName || 
-      `${data.perFirstName} ${data.perMiddleName ? data.perMiddleName + ' ' : ''}${data.perLastName}`.trim();
+    const displayName =
+      data.perDisplayName ||
+      `${data.perFirstName} ${data.perMiddleName ? data.perMiddleName + " " : ""}${data.perLastName}`.trim();
 
     const insertData: PersonInsert = {
       ...data,
@@ -101,9 +102,13 @@ export class PersonRepository extends BaseRepository<
   /**
    * Update person
    */
-  async update(id: number, data: PersonUpdate, userId?: number): Promise<Person | null> {
+  async update(
+    id: number,
+    data: PersonUpdate,
+    userId?: number,
+  ): Promise<Person | null> {
     const now = new Date();
-    
+
     // Auto-update display name if name fields changed
     let displayName = data.perDisplayName;
     if (!displayName && (data.perFirstName || data.perLastName)) {
@@ -113,7 +118,8 @@ export class PersonRepository extends BaseRepository<
         const firstName = data.perFirstName ?? current.perFirstName;
         const middleName = data.perMiddleName ?? current.perMiddleName;
         const lastName = data.perLastName ?? current.perLastName;
-        displayName = `${firstName} ${middleName ? middleName + ' ' : ''}${lastName}`.trim();
+        displayName =
+          `${firstName} ${middleName ? middleName + " " : ""}${lastName}`.trim();
       }
     }
 

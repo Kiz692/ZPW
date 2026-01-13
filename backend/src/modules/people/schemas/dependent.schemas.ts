@@ -3,9 +3,9 @@
  * Zod schemas for dependent validation
  */
 
-import { z } from 'zod';
+import { z } from "zod";
 
-const relationshipCodes = z.enum(['SPOUSE', 'CHILD', 'PARENT', 'OTHER']);
+const relationshipCodes = z.enum(["SPOUSE", "CHILD", "PARENT", "OTHER"]);
 
 export const dependentCreateSchema = z.object({
   depTenantId: z.number().int().positive(),

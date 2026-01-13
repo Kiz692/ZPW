@@ -3,10 +3,10 @@
  * Provides common CRUD operations, tenant filtering, and audit field population
  */
 
-import { and, eq, isNull } from 'drizzle-orm';
-import type { PgTable } from 'drizzle-orm/pg-core';
-import type { SQL } from 'drizzle-orm';
-import { db } from '../../../core/db/client.js';
+import { and, eq, isNull } from "drizzle-orm";
+import type { PgTable } from "drizzle-orm/pg-core";
+import type { SQL } from "drizzle-orm";
+import { db } from "../../../core/db/client.js";
 
 export interface AuditFields {
   createdAt?: Date;
@@ -21,12 +21,17 @@ export interface AuditFields {
  * Base repository with common operations
  * Generic implementation that works with any Drizzle table
  */
-export abstract class BaseRepository<TTable extends PgTable, TEntity, TInsert, TUpdate> {
+export abstract class BaseRepository<
+  TTable extends PgTable,
+  TEntity,
+  TInsert,
+  TUpdate,
+> {
   constructor(
     protected readonly table: TTable,
     protected readonly idColumn: string,
     protected readonly tenantColumn?: string,
-    protected readonly deletedColumn?: string
+    protected readonly deletedColumn?: string,
   ) {}
 
   /**
@@ -36,7 +41,7 @@ export abstract class BaseRepository<TTable extends PgTable, TEntity, TInsert, T
     const now = new Date();
     const insertData = {
       ...data,
-      ...this.getAuditFields('create', userId, now),
+      ...this.getAuditFields("create", userId, now),
     } as any;
 
     const [result] = await db.insert(this.table).values(insertData).returning();
@@ -60,7 +65,11 @@ export abstract class BaseRepository<TTable extends PgTable, TEntity, TInsert, T
   /**
    * Find all entities (with tenant filtering if applicable)
    */
-  async findAll(tenantId?: number, limit?: number, offset?: number): Promise<TEntity[]> {
+  async findAll(
+    tenantId?: number,
+    limit?: number,
+    offset?: number,
+  ): Promise<TEntity[]> {
     const conditions = this.buildConditions(undefined, tenantId);
     let query = db.select().from(this.table);
 
@@ -82,11 +91,16 @@ export abstract class BaseRepository<TTable extends PgTable, TEntity, TInsert, T
   /**
    * Update entity by ID
    */
-  async update(id: number, data: TUpdate, tenantId?: number, userId?: number): Promise<TEntity | null> {
+  async update(
+    id: number,
+    data: TUpdate,
+    tenantId?: number,
+    userId?: number,
+  ): Promise<TEntity | null> {
     const now = new Date();
     const updateData = {
       ...data,
-      ...this.getAuditFields('update', userId, now),
+      ...this.getAuditFields("update", userId, now),
     } as any;
 
     const conditions = this.buildConditions(id, tenantId);
@@ -102,13 +116,20 @@ export abstract class BaseRepository<TTable extends PgTable, TEntity, TInsert, T
   /**
    * Soft delete entity by ID
    */
-  async softDelete(id: number, tenantId?: number, userId?: number): Promise<boolean> {
+  async softDelete(
+    id: number,
+    tenantId?: number,
+    userId?: number,
+  ): Promise<boolean> {
     if (!this.deletedColumn) {
-      throw new Error('Soft delete not supported for this entity');
+      throw new Error("Soft delete not supported for this entity");
     }
 
     const now = new Date();
-    const deletedByColumn = this.deletedColumn.replace('DeletedAt', 'DeletedBy');
+    const deletedByColumn = this.deletedColumn.replace(
+      "DeletedAt",
+      "DeletedBy",
+    );
     const updateData: Record<string, unknown> = {
       [this.deletedColumn]: now,
     };
@@ -157,21 +178,21 @@ export abstract class BaseRepository<TTable extends PgTable, TEntity, TInsert, T
    * Get audit fields for create/update operations
    */
   protected getAuditFields(
-    operation: 'create' | 'update',
+    operation: "create" | "update",
     userId?: number,
-    timestamp?: Date
+    timestamp?: Date,
   ): Partial<Record<string, unknown>> {
     const now = timestamp || new Date();
     const fields: Record<string, unknown> = {};
 
-    if (operation === 'create') {
-      const createdAtCol = this.getColumn('createdAt');
-      const createdByCol = this.getColumn('createdBy');
+    if (operation === "create") {
+      const createdAtCol = this.getColumn("createdAt");
+      const createdByCol = this.getColumn("createdBy");
       if (createdAtCol) fields[createdAtCol] = now;
       if (createdByCol && userId) fields[createdByCol] = userId;
     } else {
-      const updatedAtCol = this.getColumn('updatedAt');
-      const updatedByCol = this.getColumn('updatedBy');
+      const updatedAtCol = this.getColumn("updatedAt");
+      const updatedByCol = this.getColumn("updatedBy");
       if (updatedAtCol) fields[updatedAtCol] = now;
       if (updatedByCol && userId) fields[updatedByCol] = userId;
     }
@@ -185,15 +206,15 @@ export abstract class BaseRepository<TTable extends PgTable, TEntity, TInsert, T
   protected getColumn(camelCase: string): string | null {
     // Try to find column in table schema
     const table = this.table as any;
-    const columns = table[Symbol.for('drizzle:Columns')] || {};
-    
+    const columns = table[Symbol.for("drizzle:Columns")] || {};
+
     // Check direct match
     if (columns[camelCase]) {
       return camelCase;
     }
 
     // Check snake_case version
-    const snakeCase = camelCase.replace(/([A-Z])/g, '_$1').toLowerCase();
+    const snakeCase = camelCase.replace(/([A-Z])/g, "_$1").toLowerCase();
     for (const [key, value] of Object.entries(columns)) {
       if ((value as any).name === snakeCase) {
         return key;

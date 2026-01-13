@@ -3,9 +3,9 @@
  * Business logic for qualification management
  */
 
-import { QualificationRepository } from '../repositories/qualification.repository.js';
-import { BaseService } from './base.service.js';
-import { AuditAction, AuditEntityType } from '../../../core/audit/types.js';
+import { QualificationRepository } from "../repositories/qualification.repository.js";
+import { BaseService } from "./base.service.js";
+import { AuditAction, AuditEntityType } from "../../../core/audit/types.js";
 
 export class QualificationService extends BaseService {
   private qualificationRepo = new QualificationRepository();
@@ -19,18 +19,22 @@ export class QualificationService extends BaseService {
       qlfLevelCode?: string;
       qlfCompletionYear?: number;
     },
-    userId?: number
+    userId?: number,
   ) {
-    this.validateRequired(data, ['qlfPerId', 'qlfQualificationTypeCode', 'qlfQualificationName']);
+    this.validateRequired(data, [
+      "qlfPerId",
+      "qlfQualificationTypeCode",
+      "qlfQualificationName",
+    ]);
 
     const qualification = await this.qualificationRepo.create(data, userId);
-    
+
     await this.recordAudit(
       AuditAction.QLF_CREATED,
       AuditEntityType.QUALIFICATION,
       qualification.qlfId,
       undefined,
-      userId
+      userId,
     );
 
     return qualification;
@@ -57,7 +61,7 @@ export class QualificationService extends BaseService {
       qlfLevelCode?: string;
       qlfCompletionYear?: number;
     },
-    userId?: number
+    userId?: number,
   ) {
     const existing = await this.qualificationRepo.findById(id);
     if (!existing) {
@@ -65,14 +69,14 @@ export class QualificationService extends BaseService {
     }
 
     const updated = await this.qualificationRepo.update(id, data, userId);
-    
+
     await this.recordAudit(
       AuditAction.QLF_UPDATED,
       AuditEntityType.QUALIFICATION,
       id,
       undefined,
       userId,
-      { changes: data }
+      { changes: data },
     );
 
     return updated!;
@@ -85,13 +89,13 @@ export class QualificationService extends BaseService {
     }
 
     const deleted = await this.qualificationRepo.softDelete(id, userId);
-    
+
     await this.recordAudit(
       AuditAction.QLF_DELETED,
       AuditEntityType.QUALIFICATION,
       id,
       undefined,
-      userId
+      userId,
     );
 
     return deleted;

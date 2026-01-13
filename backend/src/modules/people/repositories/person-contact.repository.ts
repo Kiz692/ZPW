@@ -3,9 +3,9 @@
  * Data access layer for PID_PERSON_CONTACT table (global entity)
  */
 
-import { and, eq, isNull } from 'drizzle-orm';
-import { db } from '../../../core/db/client.js';
-import { pidPersonContact } from '../../../core/db/schema/people.js';
+import { and, eq, isNull } from "drizzle-orm";
+import { db } from "../../../core/db/client.js";
+import { pidPersonContact } from "../../../core/db/schema/people.js";
 
 export type PersonContact = typeof pidPersonContact.$inferSelect;
 export type PersonContactInsert = typeof pidPersonContact.$inferInsert;
@@ -22,8 +22,8 @@ export class PersonContactRepository {
       .where(
         and(
           eq(pidPersonContact.pcoId, id),
-          isNull(pidPersonContact.pcoDeletedAt)
-        )
+          isNull(pidPersonContact.pcoDeletedAt),
+        ),
       )
       .limit(1);
 
@@ -40,15 +40,18 @@ export class PersonContactRepository {
       .where(
         and(
           eq(pidPersonContact.pcoPerId, personId),
-          isNull(pidPersonContact.pcoDeletedAt)
-        )
+          isNull(pidPersonContact.pcoDeletedAt),
+        ),
       );
   }
 
   /**
    * Find primary contact of a specific type for a person
    */
-  async findPrimaryContact(personId: number, contactType: string): Promise<PersonContact | null> {
+  async findPrimaryContact(
+    personId: number,
+    contactType: string,
+  ): Promise<PersonContact | null> {
     const [result] = await db
       .select()
       .from(pidPersonContact)
@@ -57,8 +60,8 @@ export class PersonContactRepository {
           eq(pidPersonContact.pcoPerId, personId),
           eq(pidPersonContact.pcoContactTypeCode, contactType),
           eq(pidPersonContact.pcoIsPrimary, true),
-          isNull(pidPersonContact.pcoDeletedAt)
-        )
+          isNull(pidPersonContact.pcoDeletedAt),
+        ),
       )
       .limit(1);
 
@@ -68,7 +71,10 @@ export class PersonContactRepository {
   /**
    * Create contact
    */
-  async create(data: PersonContactInsert, userId?: number): Promise<PersonContact> {
+  async create(
+    data: PersonContactInsert,
+    userId?: number,
+  ): Promise<PersonContact> {
     const now = new Date();
     const insertData: PersonContactInsert = {
       ...data,
@@ -76,14 +82,21 @@ export class PersonContactRepository {
       pcoCreatedBy: userId,
     };
 
-    const [result] = await db.insert(pidPersonContact).values(insertData).returning();
+    const [result] = await db
+      .insert(pidPersonContact)
+      .values(insertData)
+      .returning();
     return result;
   }
 
   /**
    * Update contact
    */
-  async update(id: number, data: PersonContactUpdate, userId?: number): Promise<PersonContact | null> {
+  async update(
+    id: number,
+    data: PersonContactUpdate,
+    userId?: number,
+  ): Promise<PersonContact | null> {
     const now = new Date();
     const updateData: PersonContactUpdate = {
       ...data,
@@ -97,8 +110,8 @@ export class PersonContactRepository {
       .where(
         and(
           eq(pidPersonContact.pcoId, id),
-          isNull(pidPersonContact.pcoDeletedAt)
-        )
+          isNull(pidPersonContact.pcoDeletedAt),
+        ),
       )
       .returning();
 
@@ -119,8 +132,8 @@ export class PersonContactRepository {
       .where(
         and(
           eq(pidPersonContact.pcoId, id),
-          isNull(pidPersonContact.pcoDeletedAt)
-        )
+          isNull(pidPersonContact.pcoDeletedAt),
+        ),
       )
       .returning();
 

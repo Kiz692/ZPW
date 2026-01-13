@@ -3,13 +3,16 @@
  * Tests for employee API endpoints including critical flows
  */
 
-import { describe, it, expect, beforeEach, afterEach } from 'vitest';
-import { buildApp } from '../../../../app.js';
-import type { FastifyInstance } from 'fastify';
-import { truncatePeopleTables } from '../../../../tests/helpers/test-db.js';
-import { createTestPerson, createTestEmployee } from '../../../../tests/helpers/test-helpers.js';
+import { describe, it, expect, beforeEach, afterEach } from "vitest";
+import { buildApp } from "../../../../app.js";
+import type { FastifyInstance } from "fastify";
+import { truncatePeopleTables } from "../../../../tests/helpers/test-db.js";
+import {
+  createTestPerson,
+  createTestEmployee,
+} from "../../../../tests/helpers/test-helpers.js";
 
-describe('Employee API Routes - Critical Flows', () => {
+describe("Employee API Routes - Critical Flows", () => {
   let app: FastifyInstance;
 
   beforeEach(async () => {
@@ -23,19 +26,19 @@ describe('Employee API Routes - Critical Flows', () => {
     await app.close();
   });
 
-  describe('Critical Flow 1: Employee Creation Flow', () => {
-    it('should create person → create employee → fetch detail with related data', async () => {
+  describe("Critical Flow 1: Employee Creation Flow", () => {
+    it("should create person → create employee → fetch detail with related data", async () => {
       // Step 1: Create person
       const personResponse = await app.inject({
-        method: 'POST',
-        url: '/api/v1/people/persons',
+        method: "POST",
+        url: "/api/v1/people/persons",
         headers: {
-          'x-user-id': '1',
-          'x-tenant-id': '1',
+          "x-user-id": "1",
+          "x-tenant-id": "1",
         },
         payload: {
-          perFirstName: 'John',
-          perLastName: 'Doe',
+          perFirstName: "John",
+          perLastName: "Doe",
         },
       });
 
@@ -46,45 +49,45 @@ describe('Employee API Routes - Critical Flows', () => {
 
       // Step 2: Create employee
       const employeeResponse = await app.inject({
-        method: 'POST',
-        url: '/api/v1/people/employees',
+        method: "POST",
+        url: "/api/v1/people/employees",
         headers: {
-          'x-user-id': '1',
-          'x-tenant-id': '1',
+          "x-user-id": "1",
+          "x-tenant-id": "1",
         },
         payload: {
           personId: person.perId,
-          empEmployeeNumber: 'EMP001',
-          empHireDate: '2024-01-01',
-          empEmploymentTypeCode: 'PERMANENT',
-          empCurrentStatusCode: 'ACTIVE',
+          empEmployeeNumber: "EMP001",
+          empHireDate: "2024-01-01",
+          empEmploymentTypeCode: "PERMANENT",
+          empCurrentStatusCode: "ACTIVE",
         },
       });
 
       expect(employeeResponse.statusCode).toBe(201);
       const employee = JSON.parse(employeeResponse.body);
       expect(employee.empId).toBeDefined();
-      expect(employee.empEmployeeNumber).toBe('EMP001');
+      expect(employee.empEmployeeNumber).toBe("EMP001");
 
       // Step 3: Fetch employee detail
       const detailResponse = await app.inject({
-        method: 'GET',
+        method: "GET",
         url: `/api/v1/people/employees/${employee.empId}`,
         headers: {
-          'x-user-id': '1',
-          'x-tenant-id': '1',
+          "x-user-id": "1",
+          "x-tenant-id": "1",
         },
       });
 
       expect(detailResponse.statusCode).toBe(200);
       const employeeDetail = detailResponse.json();
       expect(employeeDetail.empId).toBe(employee.empId);
-      expect(employeeDetail.empEmployeeNumber).toBe('EMP001');
+      expect(employeeDetail.empEmployeeNumber).toBe("EMP001");
     });
   });
 
-  describe('Critical Flow 2: Tenant Isolation Flow', () => {
-    it('should enforce tenant isolation - Tenant A cannot see Tenant B data', async () => {
+  describe("Critical Flow 2: Tenant Isolation Flow", () => {
+    it("should enforce tenant isolation - Tenant A cannot see Tenant B data", async () => {
       // Create employee in Tenant A
       const personA = await createTestPerson();
       const employeeA = await createTestEmployee(1, personA.perId);
@@ -95,11 +98,11 @@ describe('Employee API Routes - Critical Flows', () => {
 
       // Query as Tenant A
       const tenantAResponse = await app.inject({
-        method: 'GET',
-        url: '/api/v1/people/employees',
+        method: "GET",
+        url: "/api/v1/people/employees",
         headers: {
-          'x-user-id': '1',
-          'x-tenant-id': '1',
+          "x-user-id": "1",
+          "x-tenant-id": "1",
         },
       });
 
@@ -110,11 +113,11 @@ describe('Employee API Routes - Critical Flows', () => {
 
       // Try to access Tenant B employee as Tenant A
       const crossTenantResponse = await app.inject({
-        method: 'GET',
+        method: "GET",
         url: `/api/v1/people/employees/${employeeB.empId}`,
         headers: {
-          'x-user-id': '1',
-          'x-tenant-id': '1',
+          "x-user-id": "1",
+          "x-tenant-id": "1",
         },
       });
 
@@ -122,48 +125,51 @@ describe('Employee API Routes - Critical Flows', () => {
     });
   });
 
-  describe('Critical Flow 3: Status History Flow', () => {
-    it('should create employee → change status → verify history recorded', async () => {
+  describe("Critical Flow 3: Status History Flow", () => {
+    it("should create employee → change status → verify history recorded", async () => {
       // Create employee
       const person = await createTestPerson();
       const employee = await createTestEmployee(1, person.perId);
 
       // Change status
       const statusResponse = await app.inject({
-        method: 'PATCH',
+        method: "PATCH",
         url: `/api/v1/people/employees/${employee.empId}/status`,
         headers: {
-          'x-user-id': '1',
-          'x-tenant-id': '1',
+          "x-user-id": "1",
+          "x-tenant-id": "1",
         },
         payload: {
-          statusCode: 'PROBATION',
-          effectiveDate: '2024-02-01',
-          reasonCode: 'NEW_HIRE',
+          statusCode: "PROBATION",
+          effectiveDate: "2024-02-01",
+          reasonCode: "NEW_HIRE",
         },
       });
 
       expect(statusResponse.statusCode).toBe(200);
       const statusBody = statusResponse.body;
       expect(statusBody).toBeDefined();
-      const updatedEmployee = typeof statusBody === 'string' ? JSON.parse(statusBody) : statusBody;
+      const updatedEmployee =
+        typeof statusBody === "string" ? JSON.parse(statusBody) : statusBody;
       expect(updatedEmployee).toBeDefined();
-      expect(updatedEmployee.empCurrentStatusCode).toBe('PROBATION');
+      expect(updatedEmployee.empCurrentStatusCode).toBe("PROBATION");
 
       // Verify status history
       const historyResponse = await app.inject({
-        method: 'GET',
+        method: "GET",
         url: `/api/v1/people/employees/${employee.empId}/status-history`,
         headers: {
-          'x-user-id': '1',
-          'x-tenant-id': '1',
+          "x-user-id": "1",
+          "x-tenant-id": "1",
         },
       });
 
       expect(historyResponse.statusCode).toBe(200);
       const history = historyResponse.json();
       expect(history.length).toBeGreaterThanOrEqual(2);
-      expect(history.some((h: any) => h.eshStatusCode === 'PROBATION')).toBe(true);
+      expect(history.some((h: any) => h.eshStatusCode === "PROBATION")).toBe(
+        true,
+      );
     });
   });
 });

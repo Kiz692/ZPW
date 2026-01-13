@@ -3,11 +3,11 @@
  * Business logic for employee management (tenant-scoped)
  */
 
-import { PersonRepository } from '../repositories/person.repository.js';
-import { EmployeeRepository } from '../repositories/employee.repository.js';
-import { StatusHistoryRepository } from '../repositories/status-history.repository.js';
-import { BaseService } from './base.service.js';
-import { AuditAction, AuditEntityType } from '../../../core/audit/types.js';
+import { PersonRepository } from "../repositories/person.repository.js";
+import { EmployeeRepository } from "../repositories/employee.repository.js";
+import { StatusHistoryRepository } from "../repositories/status-history.repository.js";
+import { BaseService } from "./base.service.js";
+import { AuditAction, AuditEntityType } from "../../../core/audit/types.js";
 
 export class EmployeeService extends BaseService {
   private employeeRepo = new EmployeeRepository();
@@ -35,14 +35,18 @@ export class EmployeeService extends BaseService {
       empCurrentStatusEffectiveDate?: Date;
     },
     tenantId: number,
-    userId?: number
+    userId?: number,
   ) {
-    this.validateRequired(data, ['empEmployeeNumber']);
+    this.validateRequired(data, ["empEmployeeNumber"]);
 
     // Check unique employee number within tenant
     await this.checkUnique(
-      () => this.employeeRepo.findByEmployeeNumber(data.empEmployeeNumber, tenantId),
-      `Employee number ${data.empEmployeeNumber} already exists in this tenant`
+      () =>
+        this.employeeRepo.findByEmployeeNumber(
+          data.empEmployeeNumber,
+          tenantId,
+        ),
+      `Employee number ${data.empEmployeeNumber} already exists in this tenant`,
     );
 
     // Get or create person
@@ -51,13 +55,13 @@ export class EmployeeService extends BaseService {
       const person = await this.personRepo.create(data.personData, userId);
       personId = person.perId;
     } else if (!personId) {
-      throw new Error('Either personId or personData must be provided');
+      throw new Error("Either personId or personData must be provided");
     }
 
     // Check one employee per person per tenant
     await this.checkUnique(
       () => this.employeeRepo.findByPersonId(personId!, tenantId),
-      `Person ${personId} already has an employee record in this tenant`
+      `Person ${personId} already has an employee record in this tenant`,
     );
 
     const employee = await this.employeeRepo.create(
@@ -67,10 +71,11 @@ export class EmployeeService extends BaseService {
         empEmployeeNumber: data.empEmployeeNumber,
         empHireDate: data.empHireDate,
         empEmploymentTypeCode: data.empEmploymentTypeCode,
-        empCurrentStatusCode: data.empCurrentStatusCode || 'PLANNED',
-        empCurrentStatusEffectiveDate: data.empCurrentStatusEffectiveDate || data.empHireDate,
+        empCurrentStatusCode: data.empCurrentStatusCode || "PLANNED",
+        empCurrentStatusEffectiveDate:
+          data.empCurrentStatusEffectiveDate || data.empHireDate,
       },
-      userId
+      userId,
     );
 
     // Create initial status history
@@ -80,9 +85,12 @@ export class EmployeeService extends BaseService {
           eshTenantId: tenantId,
           eshEmpId: employee.empId,
           eshStatusCode: employee.empCurrentStatusCode,
-          eshEffectiveDate: employee.empCurrentStatusEffectiveDate || employee.empHireDate || new Date(),
+          eshEffectiveDate:
+            employee.empCurrentStatusEffectiveDate ||
+            employee.empHireDate ||
+            new Date(),
         },
-        userId
+        userId,
       );
     }
 
@@ -92,7 +100,7 @@ export class EmployeeService extends BaseService {
       employee.empId,
       tenantId,
       userId,
-      { employeeNumber: employee.empEmployeeNumber, personId }
+      { employeeNumber: employee.empEmployeeNumber, personId },
     );
 
     return employee;
@@ -129,7 +137,7 @@ export class EmployeeService extends BaseService {
       empCurrentStatusEffectiveDate?: Date;
     },
     tenantId: number,
-    userId?: number
+    userId?: number,
   ) {
     const existing = await this.employeeRepo.findById(id, tenantId);
     if (!existing) {
@@ -137,17 +145,27 @@ export class EmployeeService extends BaseService {
     }
 
     // Check unique employee number if changing
-    if (data.empEmployeeNumber && data.empEmployeeNumber !== existing.empEmployeeNumber) {
+    if (
+      data.empEmployeeNumber &&
+      data.empEmployeeNumber !== existing.empEmployeeNumber
+    ) {
       await this.checkUnique(
-        () => this.employeeRepo.findByEmployeeNumber(data.empEmployeeNumber!, tenantId),
-        `Employee number ${data.empEmployeeNumber} already exists in this tenant`
+        () =>
+          this.employeeRepo.findByEmployeeNumber(
+            data.empEmployeeNumber!,
+            tenantId,
+          ),
+        `Employee number ${data.empEmployeeNumber} already exists in this tenant`,
       );
     }
 
     // Handle status change
-    if (data.empCurrentStatusCode && data.empCurrentStatusCode !== existing.empCurrentStatusCode) {
+    if (
+      data.empCurrentStatusCode &&
+      data.empCurrentStatusCode !== existing.empCurrentStatusCode
+    ) {
       const effectiveDate = data.empCurrentStatusEffectiveDate || new Date();
-      
+
       // Create status history entry
       await this.statusHistoryRepo.create(
         {
@@ -156,19 +174,19 @@ export class EmployeeService extends BaseService {
           eshStatusCode: data.empCurrentStatusCode,
           eshEffectiveDate: effectiveDate,
         },
-        userId
+        userId,
       );
     }
 
     const updated = await this.employeeRepo.update(id, data, tenantId, userId);
-    
+
     await this.recordAudit(
       AuditAction.EMP_UPDATED,
       AuditEntityType.EMPLOYEE,
       id,
       tenantId,
       userId,
-      { changes: data }
+      { changes: data },
     );
 
     return updated!;
@@ -184,10 +202,10 @@ export class EmployeeService extends BaseService {
     reasonCode?: string,
     reasonNote?: string,
     tenantId?: number,
-    userId?: number
+    userId?: number,
   ) {
     if (!tenantId) {
-      throw new Error('Tenant ID is required');
+      throw new Error("Tenant ID is required");
     }
 
     const existing = await this.employeeRepo.findById(id, tenantId);
@@ -205,19 +223,25 @@ export class EmployeeService extends BaseService {
         eshReasonCode: reasonCode,
         eshReasonNote: reasonNote,
       },
-      userId
+      userId,
     );
 
     // Update employee status
-    const updated = await this.employeeRepo.updateStatus(id, statusCode, effectiveDate, tenantId, userId);
-    
+    const updated = await this.employeeRepo.updateStatus(
+      id,
+      statusCode,
+      effectiveDate,
+      tenantId,
+      userId,
+    );
+
     await this.recordAudit(
       AuditAction.EMP_STATUS_CHANGED,
       AuditEntityType.EMPLOYEE,
       id,
       tenantId,
       userId,
-      { statusCode, effectiveDate, reasonCode }
+      { statusCode, effectiveDate, reasonCode },
     );
 
     return updated!;
@@ -240,13 +264,13 @@ export class EmployeeService extends BaseService {
     }
 
     const deleted = await this.employeeRepo.softDelete(id, tenantId, userId);
-    
+
     await this.recordAudit(
       AuditAction.EMP_DELETED,
       AuditEntityType.EMPLOYEE,
       id,
       tenantId,
-      userId
+      userId,
     );
 
     return deleted;
