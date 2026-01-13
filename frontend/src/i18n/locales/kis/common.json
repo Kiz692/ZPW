@@ -1,0 +1,35 @@
+{
+  "app": {
+    "name": "Zimasa PeopleWell",
+    "title": "Mfumo wa Usimamizi wa Wafanyakazi unaolenga Afya"
+  },
+  "common": {
+    "save": "Hifadhi",
+    "cancel": "Ghairi",
+    "delete": "Futa",
+    "edit": "Hariri",
+    "create": "Unda",
+    "search": "Tafuta",
+    "loading": "Inapakia...",
+    "error": "Hitilafu",
+    "success": "Mafanikio",
+    "confirm": "Thibitisha",
+    "close": "Funga"
+  },
+  "navigation": {
+    "people": "Watu",
+    "org": "Shirika",
+    "leave": "Ruhusa",
+    "performance": "Utendakazi",
+    "gamification": "Mchezo",
+    "ai": "AI",
+    "ess": "Huduma ya Mwafaka",
+    "mss": "Huduma ya Msimamizi"
+  },
+  "people": {
+    "person": "Mtu",
+    "employee": "Mfanyakazi",
+    "contract": "Mkataba",
+    "wellness": "Wasifu wa Afya"
+  }
+}
