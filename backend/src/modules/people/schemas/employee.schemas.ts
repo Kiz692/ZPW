@@ -3,30 +3,46 @@
  * Zod schemas for employee entity validation
  */
 
-import { z } from 'zod';
+import { z } from "zod";
 
-const employmentTypeCodes = z.enum(['PERMANENT', 'FIXED_TERM', 'CASUAL', 'INTERN', 'CONSULTANT']);
-const statusCodes = z.enum(['PLANNED', 'ACTIVE', 'PROBATION', 'SUSPENDED', 'EXITED']);
+const employmentTypeCodes = z.enum([
+  "PERMANENT",
+  "FIXED_TERM",
+  "CASUAL",
+  "INTERN",
+  "CONSULTANT",
+]);
+const statusCodes = z.enum([
+  "PLANNED",
+  "ACTIVE",
+  "PROBATION",
+  "SUSPENDED",
+  "EXITED",
+]);
 
-export const employeeCreateSchema = z.object({
-  personId: z.number().int().positive().optional(),
-  personData: z.object({
-    perFirstName: z.string().min(1).max(100),
-    perMiddleName: z.string().max(100).optional(),
-    perLastName: z.string().min(1).max(150),
-    perGenderCode: z.string().max(50).optional(),
-    perDateOfBirth: z.coerce.date().optional(),
-    perNationalityCode: z.string().max(10).optional(),
-  }).optional(),
-  empEmployeeNumber: z.string().min(1).max(50),
-  empHireDate: z.coerce.date().optional(),
-  empEmploymentTypeCode: employmentTypeCodes.optional(),
-  empCurrentStatusCode: statusCodes.optional(),
-  empCurrentStatusEffectiveDate: z.coerce.date().optional(),
-}).refine(
-  (data) => data.personId !== undefined || data.personData !== undefined,
-  { message: 'Either personId or personData must be provided' }
-);
+export const employeeCreateSchema = z
+  .object({
+    personId: z.number().int().positive().optional(),
+    personData: z
+      .object({
+        perFirstName: z.string().min(1).max(100),
+        perMiddleName: z.string().max(100).optional(),
+        perLastName: z.string().min(1).max(150),
+        perGenderCode: z.string().max(50).optional(),
+        perDateOfBirth: z.coerce.date().optional(),
+        perNationalityCode: z.string().max(10).optional(),
+      })
+      .optional(),
+    empEmployeeNumber: z.string().min(1).max(50),
+    empHireDate: z.coerce.date().optional(),
+    empEmploymentTypeCode: employmentTypeCodes.optional(),
+    empCurrentStatusCode: statusCodes.optional(),
+    empCurrentStatusEffectiveDate: z.coerce.date().optional(),
+  })
+  .refine(
+    (data) => data.personId !== undefined || data.personData !== undefined,
+    { message: "Either personId or personData must be provided" },
+  );
 
 export const employeeUpdateSchema = z.object({
   empEmployeeNumber: z.string().min(1).max(50).optional(),
@@ -50,5 +66,7 @@ export const employeeQuerySchema = z.object({
 
 export type EmployeeCreateInput = z.infer<typeof employeeCreateSchema>;
 export type EmployeeUpdateInput = z.infer<typeof employeeUpdateSchema>;
-export type EmployeeStatusUpdateInput = z.infer<typeof employeeStatusUpdateSchema>;
+export type EmployeeStatusUpdateInput = z.infer<
+  typeof employeeStatusUpdateSchema
+>;
 export type EmployeeQueryInput = z.infer<typeof employeeQuerySchema>;

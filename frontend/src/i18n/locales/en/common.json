@@ -1,0 +1,35 @@
+{
+  "app": {
+    "name": "Zimasa PeopleWell",
+    "title": "Wellness-focused HRMS"
+  },
+  "common": {
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "create": "Create",
+    "search": "Search",
+    "loading": "Loading...",
+    "error": "Error",
+    "success": "Success",
+    "confirm": "Confirm",
+    "close": "Close"
+  },
+  "navigation": {
+    "people": "People",
+    "org": "Organization",
+    "leave": "Leave",
+    "performance": "Performance",
+    "gamification": "Gamification",
+    "ai": "AI",
+    "ess": "Employee Self-Service",
+    "mss": "Manager Self-Service"
+  },
+  "people": {
+    "person": "Person",
+    "employee": "Employee",
+    "contract": "Contract",
+    "wellness": "Wellness Profile"
+  }
+}

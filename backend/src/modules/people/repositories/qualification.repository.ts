@@ -3,9 +3,9 @@
  * Data access layer for PID_QUALIFICATION table (global entity)
  */
 
-import { and, eq, isNull } from 'drizzle-orm';
-import { db } from '../../../core/db/client.js';
-import { pidQualification } from '../../../core/db/schema/people.js';
+import { and, eq, isNull } from "drizzle-orm";
+import { db } from "../../../core/db/client.js";
+import { pidQualification } from "../../../core/db/schema/people.js";
 
 export type Qualification = typeof pidQualification.$inferSelect;
 export type QualificationInsert = typeof pidQualification.$inferInsert;
@@ -19,8 +19,8 @@ export class QualificationRepository {
       .where(
         and(
           eq(pidQualification.qlfId, id),
-          isNull(pidQualification.qlfDeletedAt)
-        )
+          isNull(pidQualification.qlfDeletedAt),
+        ),
       )
       .limit(1);
 
@@ -34,12 +34,15 @@ export class QualificationRepository {
       .where(
         and(
           eq(pidQualification.qlfPerId, personId),
-          isNull(pidQualification.qlfDeletedAt)
-        )
+          isNull(pidQualification.qlfDeletedAt),
+        ),
       );
   }
 
-  async create(data: QualificationInsert, userId?: number): Promise<Qualification> {
+  async create(
+    data: QualificationInsert,
+    userId?: number,
+  ): Promise<Qualification> {
     const now = new Date();
     const insertData: QualificationInsert = {
       ...data,
@@ -47,11 +50,18 @@ export class QualificationRepository {
       qlfCreatedBy: userId,
     };
 
-    const [result] = await db.insert(pidQualification).values(insertData).returning();
+    const [result] = await db
+      .insert(pidQualification)
+      .values(insertData)
+      .returning();
     return result;
   }
 
-  async update(id: number, data: QualificationUpdate, userId?: number): Promise<Qualification | null> {
+  async update(
+    id: number,
+    data: QualificationUpdate,
+    userId?: number,
+  ): Promise<Qualification | null> {
     const now = new Date();
     const updateData: QualificationUpdate = {
       ...data,
@@ -65,8 +75,8 @@ export class QualificationRepository {
       .where(
         and(
           eq(pidQualification.qlfId, id),
-          isNull(pidQualification.qlfDeletedAt)
-        )
+          isNull(pidQualification.qlfDeletedAt),
+        ),
       )
       .returning();
 
@@ -84,8 +94,8 @@ export class QualificationRepository {
       .where(
         and(
           eq(pidQualification.qlfId, id),
-          isNull(pidQualification.qlfDeletedAt)
-        )
+          isNull(pidQualification.qlfDeletedAt),
+        ),
       )
       .returning();
 

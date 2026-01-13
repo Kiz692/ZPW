@@ -3,9 +3,9 @@
  * Zod schemas for wellness profile tag validation
  */
 
-import { z } from 'zod';
+import { z } from "zod";
 
-const sourceSystemCodes = z.enum(['ZHEP', 'MANUAL', 'SYSTEM', 'IMPORT']);
+const sourceSystemCodes = z.enum(["ZHEP", "MANUAL", "SYSTEM", "IMPORT"]);
 
 export const wellnessProfileTagCreateSchema = z.object({
   wptTenantId: z.number().int().positive(),
@@ -24,5 +24,9 @@ export const wellnessProfileTagUpdateSchema = z.object({
   wptIsActive: z.boolean().optional(),
 });
 
-export type WellnessProfileTagCreateInput = z.infer<typeof wellnessProfileTagCreateSchema>;
-export type WellnessProfileTagUpdateInput = z.infer<typeof wellnessProfileTagUpdateSchema>;
+export type WellnessProfileTagCreateInput = z.infer<
+  typeof wellnessProfileTagCreateSchema
+>;
+export type WellnessProfileTagUpdateInput = z.infer<
+  typeof wellnessProfileTagUpdateSchema
+>;

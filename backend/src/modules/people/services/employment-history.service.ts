@@ -3,9 +3,9 @@
  * Business logic for employment history management
  */
 
-import { EmploymentHistoryRepository } from '../repositories/employment-history.repository.js';
-import { BaseService } from './base.service.js';
-import { AuditAction, AuditEntityType } from '../../../core/audit/types.js';
+import { EmploymentHistoryRepository } from "../repositories/employment-history.repository.js";
+import { BaseService } from "./base.service.js";
+import { AuditAction, AuditEntityType } from "../../../core/audit/types.js";
 
 export class EmploymentHistoryService extends BaseService {
   private historyRepo = new EmploymentHistoryRepository();
@@ -19,9 +19,9 @@ export class EmploymentHistoryService extends BaseService {
       pehEndDate?: Date;
       pehSummary?: string;
     },
-    userId?: number
+    userId?: number,
   ) {
-    this.validateRequired(data, ['pehPerId', 'pehEmployerName']);
+    this.validateRequired(data, ["pehPerId", "pehEmployerName"]);
 
     // Validate date range
     if (data.pehStartDate && data.pehEndDate) {
@@ -29,13 +29,13 @@ export class EmploymentHistoryService extends BaseService {
     }
 
     const history = await this.historyRepo.create(data, userId);
-    
+
     await this.recordAudit(
       AuditAction.PEH_CREATED,
       AuditEntityType.EMPLOYMENT_HISTORY,
       history.pehId,
       undefined,
-      userId
+      userId,
     );
 
     return history;
@@ -62,7 +62,7 @@ export class EmploymentHistoryService extends BaseService {
       pehEndDate?: Date;
       pehSummary?: string;
     },
-    userId?: number
+    userId?: number,
   ) {
     const existing = await this.historyRepo.findById(id);
     if (!existing) {
@@ -79,14 +79,14 @@ export class EmploymentHistoryService extends BaseService {
     }
 
     const updated = await this.historyRepo.update(id, data, userId);
-    
+
     await this.recordAudit(
       AuditAction.PEH_UPDATED,
       AuditEntityType.EMPLOYMENT_HISTORY,
       id,
       undefined,
       userId,
-      { changes: data }
+      { changes: data },
     );
 
     return updated!;
@@ -99,13 +99,13 @@ export class EmploymentHistoryService extends BaseService {
     }
 
     const deleted = await this.historyRepo.softDelete(id, userId);
-    
+
     await this.recordAudit(
       AuditAction.PEH_DELETED,
       AuditEntityType.EMPLOYMENT_HISTORY,
       id,
       undefined,
-      userId
+      userId,
     );
 
     return deleted;

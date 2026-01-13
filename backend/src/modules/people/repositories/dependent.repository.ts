@@ -3,9 +3,9 @@
  * Data access layer for PID_DEPENDENT table (tenant-scoped)
  */
 
-import { and, eq, isNull } from 'drizzle-orm';
-import { db } from '../../../core/db/client.js';
-import { pidDependent } from '../../../core/db/schema/people.js';
+import { and, eq, isNull } from "drizzle-orm";
+import { db } from "../../../core/db/client.js";
+import { pidDependent } from "../../../core/db/schema/people.js";
 
 export type Dependent = typeof pidDependent.$inferSelect;
 export type DependentInsert = typeof pidDependent.$inferInsert;
@@ -20,15 +20,18 @@ export class DependentRepository {
         and(
           eq(pidDependent.depId, id),
           eq(pidDependent.depTenantId, tenantId),
-          isNull(pidDependent.depDeletedAt)
-        )
+          isNull(pidDependent.depDeletedAt),
+        ),
       )
       .limit(1);
 
     return result || null;
   }
 
-  async findByEmployeeId(employeeId: number, tenantId: number): Promise<Dependent[]> {
+  async findByEmployeeId(
+    employeeId: number,
+    tenantId: number,
+  ): Promise<Dependent[]> {
     return await db
       .select()
       .from(pidDependent)
@@ -36,8 +39,8 @@ export class DependentRepository {
         and(
           eq(pidDependent.depEmpId, employeeId),
           eq(pidDependent.depTenantId, tenantId),
-          isNull(pidDependent.depDeletedAt)
-        )
+          isNull(pidDependent.depDeletedAt),
+        ),
       );
   }
 
@@ -49,11 +52,19 @@ export class DependentRepository {
       depCreatedBy: userId,
     };
 
-    const [result] = await db.insert(pidDependent).values(insertData).returning();
+    const [result] = await db
+      .insert(pidDependent)
+      .values(insertData)
+      .returning();
     return result;
   }
 
-  async update(id: number, data: DependentUpdate, tenantId: number, userId?: number): Promise<Dependent | null> {
+  async update(
+    id: number,
+    data: DependentUpdate,
+    tenantId: number,
+    userId?: number,
+  ): Promise<Dependent | null> {
     const now = new Date();
     const updateData: DependentUpdate = {
       ...data,
@@ -68,15 +79,19 @@ export class DependentRepository {
         and(
           eq(pidDependent.depId, id),
           eq(pidDependent.depTenantId, tenantId),
-          isNull(pidDependent.depDeletedAt)
-        )
+          isNull(pidDependent.depDeletedAt),
+        ),
       )
       .returning();
 
     return result || null;
   }
 
-  async softDelete(id: number, tenantId: number, userId?: number): Promise<boolean> {
+  async softDelete(
+    id: number,
+    tenantId: number,
+    userId?: number,
+  ): Promise<boolean> {
     const now = new Date();
     const [result] = await db
       .update(pidDependent)
@@ -88,8 +103,8 @@ export class DependentRepository {
         and(
           eq(pidDependent.depId, id),
           eq(pidDependent.depTenantId, tenantId),
-          isNull(pidDependent.depDeletedAt)
-        )
+          isNull(pidDependent.depDeletedAt),
+        ),
       )
       .returning();
 

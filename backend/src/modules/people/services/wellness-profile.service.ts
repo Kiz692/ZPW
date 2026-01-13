@@ -3,9 +3,9 @@
  * Business logic for wellness profile management
  */
 
-import { WellnessProfileRepository } from '../repositories/wellness-profile.repository.js';
-import { BaseService } from './base.service.js';
-import { AuditAction, AuditEntityType } from '../../../core/audit/types.js';
+import { WellnessProfileRepository } from "../repositories/wellness-profile.repository.js";
+import { BaseService } from "./base.service.js";
+import { AuditAction, AuditEntityType } from "../../../core/audit/types.js";
 
 export class WellnessProfileService extends BaseService {
   private wellnessProfileRepo = new WellnessProfileRepository();
@@ -21,16 +21,21 @@ export class WellnessProfileService extends BaseService {
       wepPreferredChannelCode?: string;
       wepLastZhepSyncAt?: Date;
     },
-    userId?: number
+    userId?: number,
   ) {
-    this.validateRequired(data, ['wepTenantId', 'wepEmpId']);
+    this.validateRequired(data, ["wepTenantId", "wepEmpId"]);
 
-    const profile = await this.wellnessProfileRepo.upsertByEmployeeId(data, data.wepTenantId, userId);
-    
-    const action = profile.wepCreatedAt && 
-      new Date(profile.wepCreatedAt).getTime() > Date.now() - 1000 
-      ? AuditAction.WEP_CREATED 
-      : AuditAction.WEP_UPDATED;
+    const profile = await this.wellnessProfileRepo.upsertByEmployeeId(
+      data,
+      data.wepTenantId,
+      userId,
+    );
+
+    const action =
+      profile.wepCreatedAt &&
+      new Date(profile.wepCreatedAt).getTime() > Date.now() - 1000
+        ? AuditAction.WEP_CREATED
+        : AuditAction.WEP_UPDATED;
 
     await this.recordAudit(
       action,
@@ -38,7 +43,7 @@ export class WellnessProfileService extends BaseService {
       profile.wepId,
       data.wepTenantId,
       userId,
-      { consentFlag: profile.wepConsentFlag }
+      { consentFlag: profile.wepConsentFlag },
     );
 
     return profile;
@@ -59,7 +64,10 @@ export class WellnessProfileService extends BaseService {
    * Get wellness profile by employee ID
    */
   async getByEmployeeId(employeeId: number, tenantId: number) {
-    const profile = await this.wellnessProfileRepo.findByEmployeeId(employeeId, tenantId);
+    const profile = await this.wellnessProfileRepo.findByEmployeeId(
+      employeeId,
+      tenantId,
+    );
     if (!profile) {
       throw new Error(`Wellness profile for employee ${employeeId} not found`);
     }
@@ -77,7 +85,7 @@ export class WellnessProfileService extends BaseService {
       wepLastZhepSyncAt?: Date;
     },
     tenantId: number,
-    userId?: number
+    userId?: number,
   ) {
     const existing = await this.wellnessProfileRepo.findById(id, tenantId);
     if (!existing) {
@@ -85,17 +93,26 @@ export class WellnessProfileService extends BaseService {
     }
 
     // Track consent changes
-    const consentChanged = data.wepConsentFlag !== undefined && data.wepConsentFlag !== existing.wepConsentFlag;
+    const consentChanged =
+      data.wepConsentFlag !== undefined &&
+      data.wepConsentFlag !== existing.wepConsentFlag;
 
-    const updated = await this.wellnessProfileRepo.update(id, data, tenantId, userId);
-    
+    const updated = await this.wellnessProfileRepo.update(
+      id,
+      data,
+      tenantId,
+      userId,
+    );
+
     await this.recordAudit(
-      consentChanged ? AuditAction.WEP_CONSENT_CHANGED : AuditAction.WEP_UPDATED,
+      consentChanged
+        ? AuditAction.WEP_CONSENT_CHANGED
+        : AuditAction.WEP_UPDATED,
       AuditEntityType.WELLNESS_PROFILE,
       id,
       tenantId,
       userId,
-      { changes: data, consentChanged }
+      { changes: data, consentChanged },
     );
 
     return updated!;
@@ -108,9 +125,14 @@ export class WellnessProfileService extends BaseService {
     id: number,
     consentFlag: boolean,
     tenantId: number,
-    userId?: number
+    userId?: number,
   ) {
-    return await this.update(id, { wepConsentFlag: consentFlag }, tenantId, userId);
+    return await this.update(
+      id,
+      { wepConsentFlag: consentFlag },
+      tenantId,
+      userId,
+    );
   }
 
   /**
@@ -122,14 +144,18 @@ export class WellnessProfileService extends BaseService {
       throw new Error(`Wellness profile with ID ${id} not found`);
     }
 
-    const deleted = await this.wellnessProfileRepo.softDelete(id, tenantId, userId);
-    
+    const deleted = await this.wellnessProfileRepo.softDelete(
+      id,
+      tenantId,
+      userId,
+    );
+
     await this.recordAudit(
       AuditAction.WEP_DELETED,
       AuditEntityType.WELLNESS_PROFILE,
       id,
       tenantId,
-      userId
+      userId,
     );
 
     return deleted;

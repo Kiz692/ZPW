@@ -3,9 +3,9 @@
  * Data access layer for PID_PERSON_IDENTIFIER table (global entity)
  */
 
-import { and, eq, isNull } from 'drizzle-orm';
-import { db } from '../../../core/db/client.js';
-import { pidPersonIdentifier } from '../../../core/db/schema/people.js';
+import { and, eq, isNull } from "drizzle-orm";
+import { db } from "../../../core/db/client.js";
+import { pidPersonIdentifier } from "../../../core/db/schema/people.js";
 
 export type PersonIdentifier = typeof pidPersonIdentifier.$inferSelect;
 export type PersonIdentifierInsert = typeof pidPersonIdentifier.$inferInsert;
@@ -22,8 +22,8 @@ export class PersonIdentifierRepository {
       .where(
         and(
           eq(pidPersonIdentifier.idnId, id),
-          isNull(pidPersonIdentifier.idnDeletedAt)
-        )
+          isNull(pidPersonIdentifier.idnDeletedAt),
+        ),
       )
       .limit(1);
 
@@ -40,8 +40,8 @@ export class PersonIdentifierRepository {
       .where(
         and(
           eq(pidPersonIdentifier.idnPerId, personId),
-          isNull(pidPersonIdentifier.idnDeletedAt)
-        )
+          isNull(pidPersonIdentifier.idnDeletedAt),
+        ),
       );
   }
 
@@ -51,7 +51,7 @@ export class PersonIdentifierRepository {
   async findByTypeCountryValue(
     typeCode: string,
     countryCode: string | null,
-    value: string
+    value: string,
   ): Promise<PersonIdentifier | null> {
     const conditions = [
       eq(pidPersonIdentifier.idnIdentifierTypeCode, typeCode),
@@ -77,7 +77,10 @@ export class PersonIdentifierRepository {
   /**
    * Create identifier
    */
-  async create(data: PersonIdentifierInsert, userId?: number): Promise<PersonIdentifier> {
+  async create(
+    data: PersonIdentifierInsert,
+    userId?: number,
+  ): Promise<PersonIdentifier> {
     const now = new Date();
     const insertData: PersonIdentifierInsert = {
       ...data,
@@ -85,14 +88,21 @@ export class PersonIdentifierRepository {
       idnCreatedBy: userId,
     };
 
-    const [result] = await db.insert(pidPersonIdentifier).values(insertData).returning();
+    const [result] = await db
+      .insert(pidPersonIdentifier)
+      .values(insertData)
+      .returning();
     return result;
   }
 
   /**
    * Update identifier
    */
-  async update(id: number, data: PersonIdentifierUpdate, userId?: number): Promise<PersonIdentifier | null> {
+  async update(
+    id: number,
+    data: PersonIdentifierUpdate,
+    userId?: number,
+  ): Promise<PersonIdentifier | null> {
     const now = new Date();
     const updateData: PersonIdentifierUpdate = {
       ...data,
@@ -106,8 +116,8 @@ export class PersonIdentifierRepository {
       .where(
         and(
           eq(pidPersonIdentifier.idnId, id),
-          isNull(pidPersonIdentifier.idnDeletedAt)
-        )
+          isNull(pidPersonIdentifier.idnDeletedAt),
+        ),
       )
       .returning();
 
@@ -128,8 +138,8 @@ export class PersonIdentifierRepository {
       .where(
         and(
           eq(pidPersonIdentifier.idnId, id),
-          isNull(pidPersonIdentifier.idnDeletedAt)
-        )
+          isNull(pidPersonIdentifier.idnDeletedAt),
+        ),
       )
       .returning();
 

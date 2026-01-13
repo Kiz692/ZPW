@@ -3,9 +3,9 @@
  * Business logic for employment contract management
  */
 
-import { ContractRepository } from '../repositories/contract.repository.js';
-import { BaseService } from './base.service.js';
-import { AuditAction, AuditEntityType } from '../../../core/audit/types.js';
+import { ContractRepository } from "../repositories/contract.repository.js";
+import { BaseService } from "./base.service.js";
+import { AuditAction, AuditEntityType } from "../../../core/audit/types.js";
 
 export class ContractService extends BaseService {
   private contractRepo = new ContractRepository();
@@ -23,9 +23,15 @@ export class ContractService extends BaseService {
       ctrStatusCode: string;
       ctrPrmPasId?: number;
     },
-    userId?: number
+    userId?: number,
   ) {
-    this.validateRequired(data, ['ctrTenantId', 'ctrEmpId', 'ctrContractTypeCode', 'ctrStartDate', 'ctrStatusCode']);
+    this.validateRequired(data, [
+      "ctrTenantId",
+      "ctrEmpId",
+      "ctrContractTypeCode",
+      "ctrStartDate",
+      "ctrStatusCode",
+    ]);
 
     // Validate date range
     if (data.ctrEndDate) {
@@ -33,24 +39,35 @@ export class ContractService extends BaseService {
     }
 
     // Check for overlapping contracts
-    const existingContracts = await this.contractRepo.findByEmployeeId(data.ctrEmpId, data.ctrTenantId);
+    const existingContracts = await this.contractRepo.findByEmployeeId(
+      data.ctrEmpId,
+      data.ctrTenantId,
+    );
     for (const contract of existingContracts) {
-      if (contract.ctrStatusCode === 'ACTIVE' || contract.ctrStatusCode === 'DRAFT') {
-        const contractEnd = contract.ctrEndDate || new Date('9999-12-31');
-        if (data.ctrStartDate <= contractEnd && (!data.ctrEndDate || data.ctrEndDate >= contract.ctrStartDate)) {
-          throw new Error('Contract dates overlap with existing active or draft contract');
+      if (
+        contract.ctrStatusCode === "ACTIVE" ||
+        contract.ctrStatusCode === "DRAFT"
+      ) {
+        const contractEnd = contract.ctrEndDate || new Date("9999-12-31");
+        if (
+          data.ctrStartDate <= contractEnd &&
+          (!data.ctrEndDate || data.ctrEndDate >= contract.ctrStartDate)
+        ) {
+          throw new Error(
+            "Contract dates overlap with existing active or draft contract",
+          );
         }
       }
     }
 
     const contract = await this.contractRepo.create(data, userId);
-    
+
     await this.recordAudit(
       AuditAction.CTR_CREATED,
       AuditEntityType.CONTRACT,
       contract.ctrId,
       data.ctrTenantId,
-      userId
+      userId,
     );
 
     return contract;
@@ -85,7 +102,7 @@ export class ContractService extends BaseService {
       ctrPrmPasId?: number;
     },
     tenantId: number,
-    userId?: number
+    userId?: number,
   ) {
     const existing = await this.contractRepo.findById(id, tenantId);
     if (!existing) {
@@ -102,14 +119,14 @@ export class ContractService extends BaseService {
     }
 
     const updated = await this.contractRepo.update(id, data, tenantId, userId);
-    
+
     await this.recordAudit(
       AuditAction.CTR_UPDATED,
       AuditEntityType.CONTRACT,
       id,
       tenantId,
       userId,
-      { changes: data }
+      { changes: data },
     );
 
     return updated!;
@@ -122,13 +139,13 @@ export class ContractService extends BaseService {
     }
 
     const deleted = await this.contractRepo.softDelete(id, tenantId, userId);
-    
+
     await this.recordAudit(
       AuditAction.CTR_DELETED,
       AuditEntityType.CONTRACT,
       id,
       tenantId,
-      userId
+      userId,
     );
 
     return deleted;

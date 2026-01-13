@@ -3,10 +3,10 @@
  * API routes for status history (read-only, auto-created)
  */
 
-import type { FastifyInstance } from 'fastify';
-import { StatusHistoryService } from '../services/status-history.service.js';
-import { statusHistoryQuerySchema } from '../schemas/status-history.schemas.js';
-import { requireTenant } from '../../../core/auth/tenant.middleware.js';
+import type { FastifyInstance } from "fastify";
+import { StatusHistoryService } from "../services/status-history.service.js";
+import { statusHistoryQuerySchema } from "../schemas/status-history.schemas.js";
+import { requireTenant } from "../../../core/auth/tenant.middleware.js";
 
 export async function registerStatusHistoryRoutes(app: FastifyInstance) {
   const statusHistoryService = new StatusHistoryService();
@@ -15,25 +15,28 @@ export async function registerStatusHistoryRoutes(app: FastifyInstance) {
   // This route file only handles direct status history access by ID
 
   app.get(
-    '/status-history/:id',
+    "/status-history/:id",
     {
       schema: {
-        description: 'Get status history by ID',
-        tags: ['People Core - Status History'],
-        params: { type: 'object', properties: { id: { type: 'number' } } },
+        description: "Get status history by ID",
+        tags: ["People Core - Status History"],
+        params: { type: "object", properties: { id: { type: "number" } } },
       },
     },
     async (request: any, reply) => {
       try {
         const tenantId = requireTenant(request);
-        const history = await statusHistoryService.getById(Number(request.params.id), tenantId);
+        const history = await statusHistoryService.getById(
+          Number(request.params.id),
+          tenantId,
+        );
         return reply.send(history);
       } catch (error: any) {
-        if (error.message.includes('not found')) {
+        if (error.message.includes("not found")) {
           return reply.status(404).send({ error: error.message });
         }
         throw error;
       }
-    }
+    },
   );
 }

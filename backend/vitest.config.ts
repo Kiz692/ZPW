@@ -9,6 +9,11 @@ export default defineConfig({
   test: {
     globals: true,
     environment: 'node',
+    exclude: [
+      '**/node_modules/**',
+      '**/dist/**',
+      '**/e2e/**', // Exclude Playwright E2E tests (run separately with npm run test:e2e)
+    ],
     env: {
       DATABASE_URL: process.env.DATABASE_URL || 'postgresql://zpw_user:zpw_dev_password@localhost:5432/zpw_db',
       NODE_ENV: process.env.NODE_ENV || 'test',

@@ -3,10 +3,23 @@
  * Zod schemas for qualification validation
  */
 
-import { z } from 'zod';
+import { z } from "zod";
 
-const qualificationTypeCodes = z.enum(['EDUCATION', 'PROFESSIONAL', 'CERTIFICATION', 'OTHER']);
-const levelCodes = z.enum(['DIPLOMA', 'DEGREE', 'BACHELORS', 'MASTERS', 'DOCTORATE', 'CERTIFICATE', 'OTHER']);
+const qualificationTypeCodes = z.enum([
+  "EDUCATION",
+  "PROFESSIONAL",
+  "CERTIFICATION",
+  "OTHER",
+]);
+const levelCodes = z.enum([
+  "DIPLOMA",
+  "DEGREE",
+  "BACHELORS",
+  "MASTERS",
+  "DOCTORATE",
+  "CERTIFICATE",
+  "OTHER",
+]);
 
 export const qualificationCreateSchema = z.object({
   qlfPerId: z.number().int().positive(),
@@ -25,5 +38,9 @@ export const qualificationUpdateSchema = z.object({
   qlfCompletionYear: z.number().int().min(1900).max(2100).optional(),
 });
 
-export type QualificationCreateInput = z.infer<typeof qualificationCreateSchema>;
-export type QualificationUpdateInput = z.infer<typeof qualificationUpdateSchema>;
+export type QualificationCreateInput = z.infer<
+  typeof qualificationCreateSchema
+>;
+export type QualificationUpdateInput = z.infer<
+  typeof qualificationUpdateSchema
+>;

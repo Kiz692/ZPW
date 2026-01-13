@@ -3,16 +3,19 @@
  * Data access layer for PID_WELLNESS_PROFILE table (tenant-scoped)
  */
 
-import { and, eq, isNull } from 'drizzle-orm';
-import { db } from '../../../core/db/client.js';
-import { pidWellnessProfile } from '../../../core/db/schema/people.js';
+import { and, eq, isNull } from "drizzle-orm";
+import { db } from "../../../core/db/client.js";
+import { pidWellnessProfile } from "../../../core/db/schema/people.js";
 
 export type WellnessProfile = typeof pidWellnessProfile.$inferSelect;
 export type WellnessProfileInsert = typeof pidWellnessProfile.$inferInsert;
 export type WellnessProfileUpdate = Partial<WellnessProfileInsert>;
 
 export class WellnessProfileRepository {
-  async findById(id: number, tenantId: number): Promise<WellnessProfile | null> {
+  async findById(
+    id: number,
+    tenantId: number,
+  ): Promise<WellnessProfile | null> {
     const [result] = await db
       .select()
       .from(pidWellnessProfile)
@@ -20,15 +23,18 @@ export class WellnessProfileRepository {
         and(
           eq(pidWellnessProfile.wepId, id),
           eq(pidWellnessProfile.wepTenantId, tenantId),
-          isNull(pidWellnessProfile.wepDeletedAt)
-        )
+          isNull(pidWellnessProfile.wepDeletedAt),
+        ),
       )
       .limit(1);
 
     return result || null;
   }
 
-  async findByEmployeeId(employeeId: number, tenantId: number): Promise<WellnessProfile | null> {
+  async findByEmployeeId(
+    employeeId: number,
+    tenantId: number,
+  ): Promise<WellnessProfile | null> {
     const [result] = await db
       .select()
       .from(pidWellnessProfile)
@@ -36,15 +42,18 @@ export class WellnessProfileRepository {
         and(
           eq(pidWellnessProfile.wepEmpId, employeeId),
           eq(pidWellnessProfile.wepTenantId, tenantId),
-          isNull(pidWellnessProfile.wepDeletedAt)
-        )
+          isNull(pidWellnessProfile.wepDeletedAt),
+        ),
       )
       .limit(1);
 
     return result || null;
   }
 
-  async create(data: WellnessProfileInsert, userId?: number): Promise<WellnessProfile> {
+  async create(
+    data: WellnessProfileInsert,
+    userId?: number,
+  ): Promise<WellnessProfile> {
     const now = new Date();
     const insertData: WellnessProfileInsert = {
       ...data,
@@ -52,11 +61,19 @@ export class WellnessProfileRepository {
       wepCreatedBy: userId,
     };
 
-    const [result] = await db.insert(pidWellnessProfile).values(insertData).returning();
+    const [result] = await db
+      .insert(pidWellnessProfile)
+      .values(insertData)
+      .returning();
     return result;
   }
 
-  async update(id: number, data: WellnessProfileUpdate, tenantId: number, userId?: number): Promise<WellnessProfile | null> {
+  async update(
+    id: number,
+    data: WellnessProfileUpdate,
+    tenantId: number,
+    userId?: number,
+  ): Promise<WellnessProfile | null> {
     const now = new Date();
     const updateData: WellnessProfileUpdate = {
       ...data,
@@ -71,8 +88,8 @@ export class WellnessProfileRepository {
         and(
           eq(pidWellnessProfile.wepId, id),
           eq(pidWellnessProfile.wepTenantId, tenantId),
-          isNull(pidWellnessProfile.wepDeletedAt)
-        )
+          isNull(pidWellnessProfile.wepDeletedAt),
+        ),
       )
       .returning();
 
@@ -85,10 +102,10 @@ export class WellnessProfileRepository {
   async upsertByEmployeeId(
     data: WellnessProfileInsert,
     tenantId: number,
-    userId?: number
+    userId?: number,
   ): Promise<WellnessProfile> {
     const existing = await this.findByEmployeeId(data.wepEmpId, tenantId);
-    
+
     if (existing) {
       const updated = await this.update(existing.wepId, data, tenantId, userId);
       return updated!;
@@ -97,7 +114,11 @@ export class WellnessProfileRepository {
     }
   }
 
-  async softDelete(id: number, tenantId: number, userId?: number): Promise<boolean> {
+  async softDelete(
+    id: number,
+    tenantId: number,
+    userId?: number,
+  ): Promise<boolean> {
     const now = new Date();
     const [result] = await db
       .update(pidWellnessProfile)
@@ -109,8 +130,8 @@ export class WellnessProfileRepository {
         and(
           eq(pidWellnessProfile.wepId, id),
           eq(pidWellnessProfile.wepTenantId, tenantId),
-          isNull(pidWellnessProfile.wepDeletedAt)
-        )
+          isNull(pidWellnessProfile.wepDeletedAt),
+        ),
       )
       .returning();
 

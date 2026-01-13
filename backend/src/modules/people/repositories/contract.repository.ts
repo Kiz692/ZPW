@@ -3,9 +3,9 @@
  * Data access layer for PID_EMP_CONTRACT table (tenant-scoped)
  */
 
-import { and, eq, isNull } from 'drizzle-orm';
-import { db } from '../../../core/db/client.js';
-import { pidEmpContract } from '../../../core/db/schema/people.js';
+import { and, eq, isNull } from "drizzle-orm";
+import { db } from "../../../core/db/client.js";
+import { pidEmpContract } from "../../../core/db/schema/people.js";
 
 export type Contract = typeof pidEmpContract.$inferSelect;
 export type ContractInsert = typeof pidEmpContract.$inferInsert;
@@ -23,8 +23,8 @@ export class ContractRepository {
         and(
           eq(pidEmpContract.ctrId, id),
           eq(pidEmpContract.ctrTenantId, tenantId),
-          isNull(pidEmpContract.ctrDeletedAt)
-        )
+          isNull(pidEmpContract.ctrDeletedAt),
+        ),
       )
       .limit(1);
 
@@ -34,7 +34,10 @@ export class ContractRepository {
   /**
    * Find all contracts for an employee
    */
-  async findByEmployeeId(employeeId: number, tenantId: number): Promise<Contract[]> {
+  async findByEmployeeId(
+    employeeId: number,
+    tenantId: number,
+  ): Promise<Contract[]> {
     return await db
       .select()
       .from(pidEmpContract)
@@ -42,8 +45,8 @@ export class ContractRepository {
         and(
           eq(pidEmpContract.ctrEmpId, employeeId),
           eq(pidEmpContract.ctrTenantId, tenantId),
-          isNull(pidEmpContract.ctrDeletedAt)
-        )
+          isNull(pidEmpContract.ctrDeletedAt),
+        ),
       )
       .orderBy(pidEmpContract.ctrStartDate);
   }
@@ -51,7 +54,10 @@ export class ContractRepository {
   /**
    * Find active contract for an employee
    */
-  async findActiveContract(employeeId: number, tenantId: number): Promise<Contract | null> {
+  async findActiveContract(
+    employeeId: number,
+    tenantId: number,
+  ): Promise<Contract | null> {
     const [result] = await db
       .select()
       .from(pidEmpContract)
@@ -59,9 +65,9 @@ export class ContractRepository {
         and(
           eq(pidEmpContract.ctrEmpId, employeeId),
           eq(pidEmpContract.ctrTenantId, tenantId),
-          eq(pidEmpContract.ctrStatusCode, 'ACTIVE'),
-          isNull(pidEmpContract.ctrDeletedAt)
-        )
+          eq(pidEmpContract.ctrStatusCode, "ACTIVE"),
+          isNull(pidEmpContract.ctrDeletedAt),
+        ),
       )
       .limit(1);
 
@@ -79,14 +85,22 @@ export class ContractRepository {
       ctrCreatedBy: userId,
     };
 
-    const [result] = await db.insert(pidEmpContract).values(insertData).returning();
+    const [result] = await db
+      .insert(pidEmpContract)
+      .values(insertData)
+      .returning();
     return result;
   }
 
   /**
    * Update contract
    */
-  async update(id: number, data: ContractUpdate, tenantId: number, userId?: number): Promise<Contract | null> {
+  async update(
+    id: number,
+    data: ContractUpdate,
+    tenantId: number,
+    userId?: number,
+  ): Promise<Contract | null> {
     const now = new Date();
     const updateData: ContractUpdate = {
       ...data,
@@ -101,8 +115,8 @@ export class ContractRepository {
         and(
           eq(pidEmpContract.ctrId, id),
           eq(pidEmpContract.ctrTenantId, tenantId),
-          isNull(pidEmpContract.ctrDeletedAt)
-        )
+          isNull(pidEmpContract.ctrDeletedAt),
+        ),
       )
       .returning();
 
@@ -112,7 +126,11 @@ export class ContractRepository {
   /**
    * Soft delete contract
    */
-  async softDelete(id: number, tenantId: number, userId?: number): Promise<boolean> {
+  async softDelete(
+    id: number,
+    tenantId: number,
+    userId?: number,
+  ): Promise<boolean> {
     const now = new Date();
     const [result] = await db
       .update(pidEmpContract)
@@ -124,8 +142,8 @@ export class ContractRepository {
         and(
           eq(pidEmpContract.ctrId, id),
           eq(pidEmpContract.ctrTenantId, tenantId),
-          isNull(pidEmpContract.ctrDeletedAt)
-        )
+          isNull(pidEmpContract.ctrDeletedAt),
+        ),
       )
       .returning();
 
