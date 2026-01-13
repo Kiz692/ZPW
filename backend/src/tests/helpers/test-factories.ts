@@ -15,7 +15,7 @@ import type {
   StatusHistoryInsert,
   WellnessProfileInsert,
   WellnessProfileTagInsert,
-} from '../../modules/people/repositories/index.js';
+} from "../../modules/people/repositories/index.js";
 
 export class TestFactories {
   /**
@@ -23,13 +23,13 @@ export class TestFactories {
    */
   static createPerson(overrides: Partial<PersonInsert> = {}): PersonInsert {
     return {
-      perFirstName: 'John',
-      perLastName: 'Doe',
-      perMiddleName: 'Middle',
-      perDisplayName: 'John Middle Doe',
-      perGenderCode: 'MALE',
-      perDateOfBirth: new Date('1990-01-01'),
-      perNationalityCode: 'KE',
+      perFirstName: "John",
+      perLastName: "Doe",
+      perMiddleName: "Middle",
+      perDisplayName: "John Middle Doe",
+      perGenderCode: "MALE",
+      perDateOfBirth: new Date("1990-01-01"),
+      perNationalityCode: "KE",
       ...overrides,
     };
   }
@@ -40,16 +40,16 @@ export class TestFactories {
   static createEmployee(
     tenantId: number,
     personId: number,
-    overrides: Partial<EmployeeInsert> = {}
+    overrides: Partial<EmployeeInsert> = {},
   ): EmployeeInsert {
     return {
       empTenantId: tenantId,
       empPerId: personId,
       empEmployeeNumber: `EMP${Date.now()}`,
-      empHireDate: new Date('2024-01-01'),
-      empEmploymentTypeCode: 'PERMANENT',
-      empCurrentStatusCode: 'ACTIVE',
-      empCurrentStatusEffectiveDate: new Date('2024-01-01'),
+      empHireDate: new Date("2024-01-01"),
+      empEmploymentTypeCode: "PERMANENT",
+      empCurrentStatusCode: "ACTIVE",
+      empCurrentStatusEffectiveDate: new Date("2024-01-01"),
       ...overrides,
     };
   }
@@ -60,14 +60,14 @@ export class TestFactories {
   static createContract(
     tenantId: number,
     employeeId: number,
-    overrides: Partial<ContractInsert> = {}
+    overrides: Partial<ContractInsert> = {},
   ): ContractInsert {
     return {
       ctrTenantId: tenantId,
       ctrEmpId: employeeId,
-      ctrContractTypeCode: 'PERMANENT',
-      ctrStartDate: new Date('2024-01-01'),
-      ctrStatusCode: 'ACTIVE',
+      ctrContractTypeCode: "PERMANENT",
+      ctrStartDate: new Date("2024-01-01"),
+      ctrStatusCode: "ACTIVE",
       ctrStandardHoursPerWeek: 40,
       ctrStandardDaysPerWeek: 5,
       ...overrides,
@@ -79,11 +79,11 @@ export class TestFactories {
    */
   static createPersonContact(
     personId: number,
-    overrides: Partial<PersonContactInsert> = {}
+    overrides: Partial<PersonContactInsert> = {},
   ): PersonContactInsert {
     return {
       pcoPerId: personId,
-      pcoContactTypeCode: 'EMAIL',
+      pcoContactTypeCode: "EMAIL",
       pcoContactValue: `test${Date.now()}@example.com`,
       pcoIsPrimary: true,
       ...overrides,
@@ -95,13 +95,13 @@ export class TestFactories {
    */
   static createPersonIdentifier(
     personId: number,
-    overrides: Partial<PersonIdentifierInsert> = {}
+    overrides: Partial<PersonIdentifierInsert> = {},
   ): PersonIdentifierInsert {
     return {
       idnPerId: personId,
-      idnIdentifierTypeCode: 'NATIONAL_ID',
+      idnIdentifierTypeCode: "NATIONAL_ID",
       idnIdentifierValue: `ID${Date.now()}`,
-      idnCountryCode: 'KE',
+      idnCountryCode: "KE",
       ...overrides,
     };
   }
@@ -112,14 +112,14 @@ export class TestFactories {
   static createDependent(
     tenantId: number,
     employeeId: number,
-    overrides: Partial<DependentInsert> = {}
+    overrides: Partial<DependentInsert> = {},
   ): DependentInsert {
     return {
       depTenantId: tenantId,
       depEmpId: employeeId,
-      depName: 'Dependent Name',
-      depRelationshipCode: 'CHILD',
-      depDateOfBirth: new Date('2010-01-01'),
+      depName: "Dependent Name",
+      depRelationshipCode: "CHILD",
+      depDateOfBirth: new Date("2010-01-01"),
       depIncludedInHealthCover: true,
       depWellnessEligible: true,
       ...overrides,
@@ -131,14 +131,14 @@ export class TestFactories {
    */
   static createQualification(
     personId: number,
-    overrides: Partial<QualificationInsert> = {}
+    overrides: Partial<QualificationInsert> = {},
   ): QualificationInsert {
     return {
       qlfPerId: personId,
-      qlfQualificationTypeCode: 'EDUCATION',
-      qlfInstitution: 'Test University',
-      qlfQualificationName: 'Bachelor of Science',
-      qlfLevelCode: 'DEGREE',
+      qlfQualificationTypeCode: "EDUCATION",
+      qlfInstitution: "Test University",
+      qlfQualificationName: "Bachelor of Science",
+      qlfLevelCode: "DEGREE",
       qlfCompletionYear: 2015,
       ...overrides,
     };
@@ -149,15 +149,15 @@ export class TestFactories {
    */
   static createEmploymentHistory(
     personId: number,
-    overrides: Partial<EmploymentHistoryInsert> = {}
+    overrides: Partial<EmploymentHistoryInsert> = {},
   ): EmploymentHistoryInsert {
     return {
       pehPerId: personId,
-      pehEmployerName: 'Previous Employer',
-      pehRoleTitle: 'Software Engineer',
-      pehStartDate: new Date('2020-01-01'),
-      pehEndDate: new Date('2023-12-31'),
-      pehSummary: 'Worked on various projects',
+      pehEmployerName: "Previous Employer",
+      pehRoleTitle: "Software Engineer",
+      pehStartDate: new Date("2020-01-01"),
+      pehEndDate: new Date("2023-12-31"),
+      pehSummary: "Worked on various projects",
       ...overrides,
     };
   }
@@ -168,14 +168,14 @@ export class TestFactories {
   static createStatusHistory(
     tenantId: number,
     employeeId: number,
-    overrides: Partial<StatusHistoryInsert> = {}
+    overrides: Partial<StatusHistoryInsert> = {},
   ): StatusHistoryInsert {
     return {
       eshTenantId: tenantId,
       eshEmpId: employeeId,
-      eshStatusCode: 'ACTIVE',
-      eshEffectiveDate: new Date('2024-01-01'),
-      eshReasonCode: 'HIRED',
+      eshStatusCode: "ACTIVE",
+      eshEffectiveDate: new Date("2024-01-01"),
+      eshReasonCode: "HIRED",
       ...overrides,
     };
   }
@@ -186,13 +186,13 @@ export class TestFactories {
   static createWellnessProfile(
     tenantId: number,
     employeeId: number,
-    overrides: Partial<WellnessProfileInsert> = {}
+    overrides: Partial<WellnessProfileInsert> = {},
   ): WellnessProfileInsert {
     return {
       wepTenantId: tenantId,
       wepEmpId: employeeId,
       wepConsentFlag: true,
-      wepPreferredChannelCode: 'EMAIL',
+      wepPreferredChannelCode: "EMAIL",
       ...overrides,
     };
   }
@@ -203,13 +203,13 @@ export class TestFactories {
   static createWellnessProfileTag(
     tenantId: number,
     wellnessProfileId: number,
-    overrides: Partial<WellnessProfileTagInsert> = {}
+    overrides: Partial<WellnessProfileTagInsert> = {},
   ): WellnessProfileTagInsert {
     return {
       wptTenantId: tenantId,
       wptWepId: wellnessProfileId,
       wptTagCode: `TAG${Date.now()}`,
-      wptSourceSystem: 'MANUAL',
+      wptSourceSystem: "MANUAL",
       wptFirstSeenAt: new Date(),
       wptLastUpdatedAt: new Date(),
       wptIsActive: true,
@@ -220,7 +220,10 @@ export class TestFactories {
   /**
    * Create test tenant
    */
-  static createTenant(name = 'Test Tenant'): { tenId: number; tenName: string } {
+  static createTenant(name = "Test Tenant"): {
+    tenId: number;
+    tenName: string;
+  } {
     return {
       tenId: 1,
       tenName: name,

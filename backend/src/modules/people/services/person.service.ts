@@ -3,9 +3,9 @@
  * Business logic for person management (global entity)
  */
 
-import { PersonRepository } from '../repositories/person.repository.js';
-import { BaseService } from './base.service.js';
-import { AuditAction, AuditEntityType } from '../../../core/audit/types.js';
+import { PersonRepository } from "../repositories/person.repository.js";
+import { BaseService } from "./base.service.js";
+import { AuditAction, AuditEntityType } from "../../../core/audit/types.js";
 
 export class PersonService extends BaseService {
   private personRepo = new PersonRepository();
@@ -13,26 +13,29 @@ export class PersonService extends BaseService {
   /**
    * Create person with auto-generated display name
    */
-  async create(data: {
-    perFirstName: string;
-    perMiddleName?: string;
-    perLastName: string;
-    perDisplayName?: string;
-    perGenderCode?: string;
-    perDateOfBirth?: Date;
-    perNationalityCode?: string;
-  }, userId?: number) {
-    this.validateRequired(data, ['perFirstName', 'perLastName']);
+  async create(
+    data: {
+      perFirstName: string;
+      perMiddleName?: string;
+      perLastName: string;
+      perDisplayName?: string;
+      perGenderCode?: string;
+      perDateOfBirth?: Date;
+      perNationalityCode?: string;
+    },
+    userId?: number,
+  ) {
+    this.validateRequired(data, ["perFirstName", "perLastName"]);
 
     const person = await this.personRepo.create(data, userId);
-    
+
     await this.recordAudit(
       AuditAction.PER_CREATED,
       AuditEntityType.PERSON,
       person.perId,
       undefined,
       userId,
-      { firstName: person.perFirstName, lastName: person.perLastName }
+      { firstName: person.perFirstName, lastName: person.perLastName },
     );
 
     return person;
@@ -54,7 +57,7 @@ export class PersonService extends BaseService {
    */
   async searchByName(searchTerm: string, limit = 50) {
     if (!searchTerm || searchTerm.trim().length < 2) {
-      throw new Error('Search term must be at least 2 characters');
+      throw new Error("Search term must be at least 2 characters");
     }
     return await this.personRepo.searchByName(searchTerm, limit);
   }
@@ -80,7 +83,7 @@ export class PersonService extends BaseService {
       perDateOfBirth?: Date;
       perNationalityCode?: string;
     },
-    userId?: number
+    userId?: number,
   ) {
     const existing = await this.personRepo.findById(id);
     if (!existing) {
@@ -88,14 +91,14 @@ export class PersonService extends BaseService {
     }
 
     const updated = await this.personRepo.update(id, data, userId);
-    
+
     await this.recordAudit(
       AuditAction.PER_UPDATED,
       AuditEntityType.PERSON,
       id,
       undefined,
       userId,
-      { changes: data }
+      { changes: data },
     );
 
     return updated!;
@@ -111,13 +114,13 @@ export class PersonService extends BaseService {
     }
 
     const deleted = await this.personRepo.softDelete(id, userId);
-    
+
     await this.recordAudit(
       AuditAction.PER_DELETED,
       AuditEntityType.PERSON,
       id,
       undefined,
-      userId
+      userId,
     );
 
     return deleted;

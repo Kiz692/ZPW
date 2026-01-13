@@ -3,9 +3,9 @@
  * Business logic for person identifier management
  */
 
-import { PersonIdentifierRepository } from '../repositories/person-identifier.repository.js';
-import { BaseService } from './base.service.js';
-import { AuditAction, AuditEntityType } from '../../../core/audit/types.js';
+import { PersonIdentifierRepository } from "../repositories/person-identifier.repository.js";
+import { BaseService } from "./base.service.js";
+import { AuditAction, AuditEntityType } from "../../../core/audit/types.js";
 
 export class PersonIdentifierService extends BaseService {
   private identifierRepo = new PersonIdentifierRepository();
@@ -19,9 +19,13 @@ export class PersonIdentifierService extends BaseService {
       idnValidFrom?: Date;
       idnValidTo?: Date;
     },
-    userId?: number
+    userId?: number,
   ) {
-    this.validateRequired(data, ['idnPerId', 'idnIdentifierTypeCode', 'idnIdentifierValue']);
+    this.validateRequired(data, [
+      "idnPerId",
+      "idnIdentifierTypeCode",
+      "idnIdentifierValue",
+    ]);
 
     // Validate date range
     if (data.idnValidFrom && data.idnValidTo) {
@@ -30,22 +34,23 @@ export class PersonIdentifierService extends BaseService {
 
     // Check unique constraint
     await this.checkUnique(
-      () => this.identifierRepo.findByTypeCountryValue(
-        data.idnIdentifierTypeCode,
-        data.idnCountryCode || null,
-        data.idnIdentifierValue
-      ),
-      `Identifier ${data.idnIdentifierTypeCode} with value ${data.idnIdentifierValue} already exists`
+      () =>
+        this.identifierRepo.findByTypeCountryValue(
+          data.idnIdentifierTypeCode,
+          data.idnCountryCode || null,
+          data.idnIdentifierValue,
+        ),
+      `Identifier ${data.idnIdentifierTypeCode} with value ${data.idnIdentifierValue} already exists`,
     );
 
     const identifier = await this.identifierRepo.create(data, userId);
-    
+
     await this.recordAudit(
       AuditAction.IDN_CREATED,
       AuditEntityType.PERSON_IDENTIFIER,
       identifier.idnId,
       undefined,
-      userId
+      userId,
     );
 
     return identifier;
@@ -72,7 +77,7 @@ export class PersonIdentifierService extends BaseService {
       idnValidFrom?: Date;
       idnValidTo?: Date;
     },
-    userId?: number
+    userId?: number,
   ) {
     const existing = await this.identifierRepo.findById(id);
     if (!existing) {
@@ -89,31 +94,42 @@ export class PersonIdentifierService extends BaseService {
     }
 
     // Check unique constraint if identifier value is changing
-    if (data.idnIdentifierValue || data.idnIdentifierTypeCode || data.idnCountryCode) {
-      const typeCode = data.idnIdentifierTypeCode || existing.idnIdentifierTypeCode;
-      const countryCode = data.idnCountryCode !== undefined ? data.idnCountryCode : existing.idnCountryCode;
+    if (
+      data.idnIdentifierValue ||
+      data.idnIdentifierTypeCode ||
+      data.idnCountryCode
+    ) {
+      const typeCode =
+        data.idnIdentifierTypeCode || existing.idnIdentifierTypeCode;
+      const countryCode =
+        data.idnCountryCode !== undefined
+          ? data.idnCountryCode
+          : existing.idnCountryCode;
       const value = data.idnIdentifierValue || existing.idnIdentifierValue;
-      
-      const existingIdentifier = await this.identifierRepo.findByTypeCountryValue(
-        typeCode,
-        countryCode || null,
-        value
-      );
-      
+
+      const existingIdentifier =
+        await this.identifierRepo.findByTypeCountryValue(
+          typeCode,
+          countryCode || null,
+          value,
+        );
+
       if (existingIdentifier && existingIdentifier.idnId !== id) {
-        throw new Error(`Identifier ${typeCode} with value ${value} already exists`);
+        throw new Error(
+          `Identifier ${typeCode} with value ${value} already exists`,
+        );
       }
     }
 
     const updated = await this.identifierRepo.update(id, data, userId);
-    
+
     await this.recordAudit(
       AuditAction.IDN_UPDATED,
       AuditEntityType.PERSON_IDENTIFIER,
       id,
       undefined,
       userId,
-      { changes: data }
+      { changes: data },
     );
 
     return updated!;
@@ -126,13 +142,13 @@ export class PersonIdentifierService extends BaseService {
     }
 
     const deleted = await this.identifierRepo.softDelete(id, userId);
-    
+
     await this.recordAudit(
       AuditAction.IDN_DELETED,
       AuditEntityType.PERSON_IDENTIFIER,
       id,
       undefined,
-      userId
+      userId,
     );
 
     return deleted;

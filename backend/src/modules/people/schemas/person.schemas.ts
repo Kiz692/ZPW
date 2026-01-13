@@ -3,7 +3,7 @@
  * Zod schemas for person entity validation
  */
 
-import { z } from 'zod';
+import { z } from "zod";
 
 export const personCreateSchema = z.object({
   perFirstName: z.string().min(1).max(100),

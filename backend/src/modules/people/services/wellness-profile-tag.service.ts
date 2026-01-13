@@ -3,9 +3,9 @@
  * Business logic for wellness profile tag management
  */
 
-import { WellnessProfileTagRepository } from '../repositories/wellness-profile-tag.repository.js';
-import { BaseService } from './base.service.js';
-import { AuditAction, AuditEntityType } from '../../../core/audit/types.js';
+import { WellnessProfileTagRepository } from "../repositories/wellness-profile-tag.repository.js";
+import { BaseService } from "./base.service.js";
+import { AuditAction, AuditEntityType } from "../../../core/audit/types.js";
 
 export class WellnessProfileTagService extends BaseService {
   private tagRepo = new WellnessProfileTagRepository();
@@ -20,24 +20,36 @@ export class WellnessProfileTagService extends BaseService {
       wptLastUpdatedAt: Date;
       wptIsActive?: boolean;
     },
-    userId?: number
+    userId?: number,
   ) {
-    this.validateRequired(data, ['wptTenantId', 'wptWepId', 'wptTagCode', 'wptSourceSystem', 'wptFirstSeenAt', 'wptLastUpdatedAt']);
+    this.validateRequired(data, [
+      "wptTenantId",
+      "wptWepId",
+      "wptTagCode",
+      "wptSourceSystem",
+      "wptFirstSeenAt",
+      "wptLastUpdatedAt",
+    ]);
 
     // Check unique tag per profile
     await this.checkUnique(
-      () => this.tagRepo.findByTagCode(data.wptWepId, data.wptTagCode, data.wptTenantId),
-      `Tag ${data.wptTagCode} already exists for this wellness profile`
+      () =>
+        this.tagRepo.findByTagCode(
+          data.wptWepId,
+          data.wptTagCode,
+          data.wptTenantId,
+        ),
+      `Tag ${data.wptTagCode} already exists for this wellness profile`,
     );
 
     const tag = await this.tagRepo.create(data, userId);
-    
+
     await this.recordAudit(
       AuditAction.WPT_CREATED,
       AuditEntityType.WELLNESS_PROFILE_TAG,
       tag.wptId,
       data.wptTenantId,
-      userId
+      userId,
     );
 
     return tag;
@@ -52,7 +64,10 @@ export class WellnessProfileTagService extends BaseService {
   }
 
   async getByWellnessProfileId(wellnessProfileId: number, tenantId: number) {
-    return await this.tagRepo.findByWellnessProfileId(wellnessProfileId, tenantId);
+    return await this.tagRepo.findByWellnessProfileId(
+      wellnessProfileId,
+      tenantId,
+    );
   }
 
   async update(
@@ -64,7 +79,7 @@ export class WellnessProfileTagService extends BaseService {
       wptIsActive?: boolean;
     },
     tenantId: number,
-    userId?: number
+    userId?: number,
   ) {
     const existing = await this.tagRepo.findById(id, tenantId);
     if (!existing) {
@@ -74,20 +89,25 @@ export class WellnessProfileTagService extends BaseService {
     // Check unique tag if tag code is changing
     if (data.wptTagCode && data.wptTagCode !== existing.wptTagCode) {
       await this.checkUnique(
-        () => this.tagRepo.findByTagCode(existing.wptWepId, data.wptTagCode!, tenantId),
-        `Tag ${data.wptTagCode} already exists for this wellness profile`
+        () =>
+          this.tagRepo.findByTagCode(
+            existing.wptWepId,
+            data.wptTagCode!,
+            tenantId,
+          ),
+        `Tag ${data.wptTagCode} already exists for this wellness profile`,
       );
     }
 
     const updated = await this.tagRepo.update(id, data, tenantId, userId);
-    
+
     await this.recordAudit(
       AuditAction.WPT_UPDATED,
       AuditEntityType.WELLNESS_PROFILE_TAG,
       id,
       tenantId,
       userId,
-      { changes: data }
+      { changes: data },
     );
 
     return updated!;
@@ -100,13 +120,13 @@ export class WellnessProfileTagService extends BaseService {
     }
 
     const deleted = await this.tagRepo.softDelete(id, tenantId, userId);
-    
+
     await this.recordAudit(
       AuditAction.WPT_DELETED,
       AuditEntityType.WELLNESS_PROFILE_TAG,
       id,
       tenantId,
-      userId
+      userId,
     );
 
     return deleted;
