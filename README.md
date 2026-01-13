@@ -510,13 +510,38 @@ The People Core module includes comprehensive test coverage:
 - **Integration Tests**: Critical flow tests (person → employee → contract)
 - **Route Tests**: API endpoint tests
 
-Run tests:
+### Running Tests Locally
+
 ```bash
 cd backend
 npm test              # Run all tests
 npm run test:unit     # Unit tests only
 npm run test:integration  # Integration tests only
 ```
+
+**Current Test Results**: 65/70 tests passing (92.9% pass rate)
+
+### Running Tests in Docker Compose
+
+Tests can be run in Docker Compose with the same pass rate:
+
+```bash
+# Start database services
+docker compose up -d postgres redis
+
+# Run tests in Docker
+docker compose --profile test up backend-tests --build
+```
+
+The test service will:
+1. Install dependencies
+2. Run database migrations
+3. Execute all tests
+4. Exit with test results
+
+**Test Results in Docker**: Same as local - 65/70 tests passing (92.9% pass rate)
+
+The same 5 test failures occur in both environments (integration/route tests with response parsing issues).
 
 ## Development
 

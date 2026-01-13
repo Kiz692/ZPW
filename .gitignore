@@ -100,3 +100,5 @@ temp/
 *.cert
 secrets/
 .secrets/
+
+docs/tj-docs

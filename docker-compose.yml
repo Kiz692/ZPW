@@ -70,6 +70,32 @@ services:
       - zpw-network
     restart: unless-stopped
 
+  # Backend Tests Service
+  backend-tests:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+      target: deps
+    container_name: zpw-backend-tests
+    volumes:
+      - ./backend:/app
+      - /app/node_modules  # Prevent host node_modules from overwriting container dependencies
+    environment:
+      - NODE_ENV=test
+      - SKIP_AUTH=true
+      - DATABASE_URL=postgresql://${POSTGRES_USER:-zpw_user}:${POSTGRES_PASSWORD:-zpw_dev_password}@postgres:5432/${POSTGRES_DB:-zpw_db}
+      - REDIS_URL=redis://redis:6379
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - zpw-network
+    profiles:
+      - test  # Only start with --profile test
+    command: sh -c "npm ci && npx tsx scripts/run-migrations.ts && npm test -- --run"
+
 volumes:
   postgres_data:
     driver: local
