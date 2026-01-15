@@ -6,6 +6,9 @@ yarn-error.log*
 pnpm-debug.log*
 .pnp
 .pnp.js
+.windsurf
+_bmad/
+_bmad-output
 
 # Environment variables
 .env
