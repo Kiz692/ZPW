@@ -3,9 +3,9 @@
  * Extracts tenant ID from JWT or header and adds to request context
  */
 
-import type { FastifyRequest, FastifyReply } from 'fastify';
+import type { FastifyRequest, FastifyReply } from "fastify";
 
-declare module 'fastify' {
+declare module "fastify" {
   interface FastifyRequest {
     tenantId?: number;
     userId?: number;
@@ -18,12 +18,12 @@ declare module 'fastify' {
  */
 export async function tenantMiddleware(
   request: FastifyRequest,
-  reply: FastifyReply
+  reply: FastifyReply,
 ): Promise<void> {
   // TODO: Extract from JWT token when auth is fully implemented
   // For now, use header or default to tenant 1 in development
-  const tenantIdHeader = request.headers['x-tenant-id'];
-  
+  const tenantIdHeader = request.headers["x-tenant-id"];
+
   if (tenantIdHeader) {
     const tenantId = Number(tenantIdHeader);
     if (!isNaN(tenantId) && tenantId > 0) {
@@ -34,16 +34,20 @@ export async function tenantMiddleware(
 
   // In development, default to tenant 1 if SKIP_AUTH is enabled
   // In production, this should fail
-  if (process.env.SKIP_AUTH === 'true' && process.env.NODE_ENV === 'development') {
+  if (
+    process.env.SKIP_AUTH === "true" &&
+    process.env.NODE_ENV === "development"
+  ) {
     request.tenantId = 1;
     return;
   }
 
   // If no tenant ID found and auth is required, return 401
-  if (process.env.SKIP_AUTH !== 'true') {
+  if (process.env.SKIP_AUTH !== "true") {
     return reply.status(401).send({
-      error: 'Unauthorized',
-      message: 'Tenant ID required. Provide X-Tenant-ID header or valid JWT token.',
+      error: "Unauthorized",
+      message:
+        "Tenant ID required. Provide X-Tenant-ID header or valid JWT token.",
     });
   }
 }
@@ -53,7 +57,7 @@ export async function tenantMiddleware(
  */
 export function requireTenant(request: FastifyRequest): number {
   if (!request.tenantId) {
-    throw new Error('Tenant ID is required but not found in request context');
+    throw new Error("Tenant ID is required but not found in request context");
   }
   return request.tenantId;
 }

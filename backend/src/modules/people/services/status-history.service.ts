@@ -3,9 +3,9 @@
  * Business logic for status history management (read-only, auto-created)
  */
 
-import { StatusHistoryRepository } from '../repositories/status-history.repository.js';
-import { BaseService } from './base.service.js';
-import { AuditAction, AuditEntityType } from '../../../core/audit/types.js';
+import { StatusHistoryRepository } from "../repositories/status-history.repository.js";
+import { BaseService } from "./base.service.js";
+import { AuditAction, AuditEntityType } from "../../../core/audit/types.js";
 
 export class StatusHistoryService extends BaseService {
   private statusHistoryRepo = new StatusHistoryRepository();
@@ -40,18 +40,23 @@ export class StatusHistoryService extends BaseService {
       eshReasonCode?: string;
       eshReasonNote?: string;
     },
-    userId?: number
+    userId?: number,
   ) {
-    this.validateRequired(data, ['eshTenantId', 'eshEmpId', 'eshStatusCode', 'eshEffectiveDate']);
+    this.validateRequired(data, [
+      "eshTenantId",
+      "eshEmpId",
+      "eshStatusCode",
+      "eshEffectiveDate",
+    ]);
 
     const history = await this.statusHistoryRepo.create(data, userId);
-    
+
     await this.recordAudit(
       AuditAction.ESH_CREATED,
       AuditEntityType.STATUS_HISTORY,
       history.eshId,
       data.eshTenantId,
-      userId
+      userId,
     );
 
     return history;

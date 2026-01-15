@@ -3,9 +3,15 @@
  * Zod schemas for status history validation (read-only, auto-created)
  */
 
-import { z } from 'zod';
+import { z } from "zod";
 
-const statusCodes = z.enum(['PLANNED', 'ACTIVE', 'PROBATION', 'SUSPENDED', 'EXITED']);
+const statusCodes = z.enum([
+  "PLANNED",
+  "ACTIVE",
+  "PROBATION",
+  "SUSPENDED",
+  "EXITED",
+]);
 
 export const statusHistoryCreateSchema = z.object({
   eshTenantId: z.number().int().positive(),
@@ -21,5 +27,7 @@ export const statusHistoryQuerySchema = z.object({
   offset: z.coerce.number().int().nonnegative().optional(),
 });
 
-export type StatusHistoryCreateInput = z.infer<typeof statusHistoryCreateSchema>;
+export type StatusHistoryCreateInput = z.infer<
+  typeof statusHistoryCreateSchema
+>;
 export type StatusHistoryQueryInput = z.infer<typeof statusHistoryQuerySchema>;

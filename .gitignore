@@ -6,6 +6,9 @@ yarn-error.log*
 pnpm-debug.log*
 .pnp
 .pnp.js
+.windsurf
+_bmad/
+_bmad-output
 
 # Environment variables
 .env
@@ -100,3 +103,12 @@ temp/
 *.cert
 secrets/
 .secrets/
+
+docs/tj-docs
+
+# Playwright
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/
+/playwright/.auth/

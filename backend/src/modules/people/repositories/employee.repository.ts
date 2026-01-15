@@ -3,9 +3,9 @@
  * Data access layer for PID_EMPLOYEE table (tenant-scoped)
  */
 
-import { and, eq, isNull } from 'drizzle-orm';
-import { db } from '../../../core/db/client.js';
-import { pidEmployee } from '../../../core/db/schema/people.js';
+import { and, eq, isNull } from "drizzle-orm";
+import { db } from "../../../core/db/client.js";
+import { pidEmployee } from "../../../core/db/schema/people.js";
 
 export type Employee = typeof pidEmployee.$inferSelect;
 export type EmployeeInsert = typeof pidEmployee.$inferInsert;
@@ -23,8 +23,8 @@ export class EmployeeRepository {
         and(
           eq(pidEmployee.empId, id),
           eq(pidEmployee.empTenantId, tenantId),
-          isNull(pidEmployee.empDeletedAt)
-        )
+          isNull(pidEmployee.empDeletedAt),
+        ),
       )
       .limit(1);
 
@@ -34,7 +34,10 @@ export class EmployeeRepository {
   /**
    * Find employee by person ID and tenant
    */
-  async findByPersonId(personId: number, tenantId: number): Promise<Employee | null> {
+  async findByPersonId(
+    personId: number,
+    tenantId: number,
+  ): Promise<Employee | null> {
     const [result] = await db
       .select()
       .from(pidEmployee)
@@ -42,8 +45,8 @@ export class EmployeeRepository {
         and(
           eq(pidEmployee.empPerId, personId),
           eq(pidEmployee.empTenantId, tenantId),
-          isNull(pidEmployee.empDeletedAt)
-        )
+          isNull(pidEmployee.empDeletedAt),
+        ),
       )
       .limit(1);
 
@@ -53,7 +56,10 @@ export class EmployeeRepository {
   /**
    * Find employee by employee number and tenant
    */
-  async findByEmployeeNumber(employeeNumber: string, tenantId: number): Promise<Employee | null> {
+  async findByEmployeeNumber(
+    employeeNumber: string,
+    tenantId: number,
+  ): Promise<Employee | null> {
     const [result] = await db
       .select()
       .from(pidEmployee)
@@ -61,8 +67,8 @@ export class EmployeeRepository {
         and(
           eq(pidEmployee.empEmployeeNumber, employeeNumber),
           eq(pidEmployee.empTenantId, tenantId),
-          isNull(pidEmployee.empDeletedAt)
-        )
+          isNull(pidEmployee.empDeletedAt),
+        ),
       )
       .limit(1);
 
@@ -72,15 +78,19 @@ export class EmployeeRepository {
   /**
    * Find all employees for a tenant
    */
-  async findAll(tenantId: number, limit?: number, offset?: number): Promise<Employee[]> {
+  async findAll(
+    tenantId: number,
+    limit?: number,
+    offset?: number,
+  ): Promise<Employee[]> {
     let query = db
       .select()
       .from(pidEmployee)
       .where(
         and(
           eq(pidEmployee.empTenantId, tenantId),
-          isNull(pidEmployee.empDeletedAt)
-        )
+          isNull(pidEmployee.empDeletedAt),
+        ),
       );
 
     if (limit) {
@@ -105,14 +115,22 @@ export class EmployeeRepository {
       empCreatedBy: userId,
     };
 
-    const [result] = await db.insert(pidEmployee).values(insertData).returning();
+    const [result] = await db
+      .insert(pidEmployee)
+      .values(insertData)
+      .returning();
     return result;
   }
 
   /**
    * Update employee
    */
-  async update(id: number, data: EmployeeUpdate, tenantId: number, userId?: number): Promise<Employee | null> {
+  async update(
+    id: number,
+    data: EmployeeUpdate,
+    tenantId: number,
+    userId?: number,
+  ): Promise<Employee | null> {
     const now = new Date();
     const updateData: EmployeeUpdate = {
       ...data,
@@ -127,8 +145,8 @@ export class EmployeeRepository {
         and(
           eq(pidEmployee.empId, id),
           eq(pidEmployee.empTenantId, tenantId),
-          isNull(pidEmployee.empDeletedAt)
-        )
+          isNull(pidEmployee.empDeletedAt),
+        ),
       )
       .returning();
 
@@ -143,7 +161,7 @@ export class EmployeeRepository {
     statusCode: string,
     effectiveDate: Date,
     tenantId: number,
-    userId?: number
+    userId?: number,
   ): Promise<Employee | null> {
     const now = new Date();
     const [result] = await db
@@ -158,8 +176,8 @@ export class EmployeeRepository {
         and(
           eq(pidEmployee.empId, id),
           eq(pidEmployee.empTenantId, tenantId),
-          isNull(pidEmployee.empDeletedAt)
-        )
+          isNull(pidEmployee.empDeletedAt),
+        ),
       )
       .returning();
 
@@ -169,7 +187,11 @@ export class EmployeeRepository {
   /**
    * Soft delete employee
    */
-  async softDelete(id: number, tenantId: number, userId?: number): Promise<boolean> {
+  async softDelete(
+    id: number,
+    tenantId: number,
+    userId?: number,
+  ): Promise<boolean> {
     const now = new Date();
     const [result] = await db
       .update(pidEmployee)
@@ -181,8 +203,8 @@ export class EmployeeRepository {
         and(
           eq(pidEmployee.empId, id),
           eq(pidEmployee.empTenantId, tenantId),
-          isNull(pidEmployee.empDeletedAt)
-        )
+          isNull(pidEmployee.empDeletedAt),
+        ),
       )
       .returning();
 

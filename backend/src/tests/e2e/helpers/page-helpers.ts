@@ -3,13 +3,13 @@
  * Common page interaction utilities for E2E tests
  */
 
-import { Page, Locator } from '@playwright/test';
+import { Page } from "@playwright/test";
 
 /**
  * Wait for employee list to load
  */
 export async function waitForEmployeeList(page: Page): Promise<void> {
-  await page.waitForLoadState('networkidle');
+  await page.waitForLoadState("networkidle");
   // Wait for any loading indicators to disappear
   await page.waitForTimeout(1000);
 }
@@ -21,14 +21,14 @@ export async function getEmployeeCountFromPage(page: Page): Promise<number> {
   // Try to find count in various possible locations
   const countSelectors = [
     '[data-testid="employee-count"]',
-    '.employee-count',
+    ".employee-count",
     '[aria-label*="count"]',
-    'text=/\\d+ employees?/i',
+    "text=/\\d+ employees?/i",
   ];
 
   for (const selector of countSelectors) {
     const element = page.locator(selector).first();
-    if (await element.count() > 0) {
+    if ((await element.count()) > 0) {
       const text = await element.textContent();
       const match = text?.match(/\d+/);
       if (match) {
@@ -46,7 +46,7 @@ export async function getEmployeeCountFromPage(page: Page): Promise<number> {
  * Navigate to employees page
  */
 export async function navigateToEmployees(page: Page): Promise<void> {
-  await page.goto('/people/employees');
+  await page.goto("/people/employees");
   await waitForEmployeeList(page);
 }
 
@@ -54,6 +54,6 @@ export async function navigateToEmployees(page: Page): Promise<void> {
  * Navigate to persons page
  */
 export async function navigateToPersons(page: Page): Promise<void> {
-  await page.goto('/people/persons');
-  await page.waitForLoadState('networkidle');
+  await page.goto("/people/persons");
+  await page.waitForLoadState("networkidle");
 }

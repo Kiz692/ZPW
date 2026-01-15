@@ -1,25 +1,25 @@
 /**
  * Test Database Helpers
  * Setup and teardown for test database
- * 
+ *
  * IMPORTANT: This cleanup preserves demo seed data (identified by specific patterns)
  * and only removes test-created data to prevent flaky tests.
  */
 
-import { pool } from '../../core/db/client.js';
-import { db } from '../../core/db/client.js';
-import { sql } from 'drizzle-orm';
+import { pool } from "../../core/db/client.js";
+import { db } from "../../core/db/client.js";
+import { sql } from "drizzle-orm";
 
 /**
  * Demo seed data identifiers - these should NOT be deleted during test cleanup
  */
-const DEMO_EMPLOYEE_NUMBERS = ['EMP001', 'EMP002', 'EMP003'];
-const DEMO_TENANT_NAME = 'Demo Company';
+const DEMO_EMPLOYEE_NUMBERS = ["EMP001", "EMP002", "EMP003"];
+const _DEMO_TENANT_NAME = "Demo Company";
 
 /**
  * Check if an employee number is from demo seed data
  */
-function isDemoEmployeeNumber(empNumber: string): boolean {
+function _isDemoEmployeeNumber(empNumber: string): boolean {
   return DEMO_EMPLOYEE_NUMBERS.includes(empNumber);
 }
 
@@ -28,11 +28,11 @@ function isDemoEmployeeNumber(empNumber: string): boolean {
  * This prevents flaky tests where demo data gets deleted
  */
 export async function cleanupTestData(): Promise<void> {
-  const { 
-    pidEmployee, 
-    pidPerson, 
-    pidEmpContract, 
-    pidPersonContact, 
+  const {
+    pidEmployee,
+    pidPerson,
+    pidEmpContract,
+    pidPersonContact,
     pidPersonIdentifier,
     pidDependent,
     pidQualification,
@@ -40,8 +40,8 @@ export async function cleanupTestData(): Promise<void> {
     pidEmpStatusHistory,
     pidWellnessProfile,
     pidWellnessProfileTag,
-  } = await import('../../core/db/schema/people.js');
-  const { eq, notInArray, inArray } = await import('drizzle-orm');
+  } = await import("../../core/db/schema/people.js");
+  const { eq: _eq, notInArray, inArray } = await import("drizzle-orm");
 
   // Get demo employee IDs first
   const demoEmployees = await db
@@ -49,8 +49,8 @@ export async function cleanupTestData(): Promise<void> {
     .from(pidEmployee)
     .where(inArray(pidEmployee.empEmployeeNumber, DEMO_EMPLOYEE_NUMBERS));
 
-  const demoEmployeeIds = demoEmployees.map(e => e.empId);
-  const demoPersonIds = demoEmployees.map(e => e.empPerId);
+  const demoEmployeeIds = demoEmployees.map((e) => e.empId);
+  const demoPersonIds = demoEmployees.map((e) => e.empPerId);
 
   if (demoEmployeeIds.length === 0 && demoPersonIds.length === 0) {
     // No demo data exists, safe to do full cleanup
@@ -66,11 +66,12 @@ export async function cleanupTestData(): Promise<void> {
       .select({ wepId: pidWellnessProfile.wepId })
       .from(pidWellnessProfile)
       .where(inArray(pidWellnessProfile.wepEmpId, demoEmployeeIds));
-    
-    const demoWepIds = demoWellnessProfiles.map(w => w.wepId);
-    
+
+    const demoWepIds = demoWellnessProfiles.map((w) => w.wepId);
+
     if (demoWepIds.length > 0) {
-      await db.delete(pidWellnessProfileTag)
+      await db
+        .delete(pidWellnessProfileTag)
         .where(notInArray(pidWellnessProfileTag.wptWepId, demoWepIds));
     } else {
       await db.delete(pidWellnessProfileTag);
@@ -81,7 +82,8 @@ export async function cleanupTestData(): Promise<void> {
 
   // 2. Delete wellness profiles (not from demo)
   if (demoEmployeeIds.length > 0) {
-    await db.delete(pidWellnessProfile)
+    await db
+      .delete(pidWellnessProfile)
       .where(notInArray(pidWellnessProfile.wepEmpId, demoEmployeeIds));
   } else {
     await db.delete(pidWellnessProfile);
@@ -89,7 +91,8 @@ export async function cleanupTestData(): Promise<void> {
 
   // 3. Delete status history (not from demo)
   if (demoEmployeeIds.length > 0) {
-    await db.delete(pidEmpStatusHistory)
+    await db
+      .delete(pidEmpStatusHistory)
       .where(notInArray(pidEmpStatusHistory.eshEmpId, demoEmployeeIds));
   } else {
     await db.delete(pidEmpStatusHistory);
@@ -97,7 +100,8 @@ export async function cleanupTestData(): Promise<void> {
 
   // 4. Delete employment history (not from demo persons)
   if (demoPersonIds.length > 0) {
-    await db.delete(pidEmploymentHistory)
+    await db
+      .delete(pidEmploymentHistory)
       .where(notInArray(pidEmploymentHistory.pehPerId, demoPersonIds));
   } else {
     await db.delete(pidEmploymentHistory);
@@ -105,7 +109,8 @@ export async function cleanupTestData(): Promise<void> {
 
   // 5. Delete qualifications (not from demo persons)
   if (demoPersonIds.length > 0) {
-    await db.delete(pidQualification)
+    await db
+      .delete(pidQualification)
       .where(notInArray(pidQualification.qlfPerId, demoPersonIds));
   } else {
     await db.delete(pidQualification);
@@ -113,7 +118,8 @@ export async function cleanupTestData(): Promise<void> {
 
   // 6. Delete dependents (not from demo)
   if (demoEmployeeIds.length > 0) {
-    await db.delete(pidDependent)
+    await db
+      .delete(pidDependent)
       .where(notInArray(pidDependent.depEmpId, demoEmployeeIds));
   } else {
     await db.delete(pidDependent);
@@ -121,19 +127,22 @@ export async function cleanupTestData(): Promise<void> {
 
   // 7. Delete contracts (not from demo)
   if (demoEmployeeIds.length > 0) {
-    await db.delete(pidEmpContract)
+    await db
+      .delete(pidEmpContract)
       .where(notInArray(pidEmpContract.ctrEmpId, demoEmployeeIds));
   } else {
     await db.delete(pidEmpContract);
   }
 
   // 8. Delete employees (not from demo)
-  await db.delete(pidEmployee)
+  await db
+    .delete(pidEmployee)
     .where(notInArray(pidEmployee.empEmployeeNumber, DEMO_EMPLOYEE_NUMBERS));
 
   // 9. Delete person contacts (not from demo persons)
   if (demoPersonIds.length > 0) {
-    await db.delete(pidPersonContact)
+    await db
+      .delete(pidPersonContact)
       .where(notInArray(pidPersonContact.pcoPerId, demoPersonIds));
   } else {
     await db.delete(pidPersonContact);
@@ -141,7 +150,8 @@ export async function cleanupTestData(): Promise<void> {
 
   // 10. Delete person identifiers (not from demo persons)
   if (demoPersonIds.length > 0) {
-    await db.delete(pidPersonIdentifier)
+    await db
+      .delete(pidPersonIdentifier)
       .where(notInArray(pidPersonIdentifier.idnPerId, demoPersonIds));
   } else {
     await db.delete(pidPersonIdentifier);
@@ -149,7 +159,8 @@ export async function cleanupTestData(): Promise<void> {
 
   // 11. Delete persons (not from demo - only if not linked to demo employees)
   if (demoPersonIds.length > 0) {
-    await db.delete(pidPerson)
+    await db
+      .delete(pidPerson)
       .where(notInArray(pidPerson.perId, demoPersonIds));
   } else {
     await db.delete(pidPerson);
@@ -162,17 +173,17 @@ export async function cleanupTestData(): Promise<void> {
  */
 export async function truncatePeopleTables(): Promise<void> {
   const tables = [
-    'pid_wellness_profile_tag',
-    'pid_wellness_profile',
-    'pid_emp_status_history',
-    'pid_employment_history',
-    'pid_qualification',
-    'pid_dependent',
-    'pid_emp_contract',
-    'pid_employee',
-    'pid_person_identifier',
-    'pid_person_contact',
-    'pid_person',
+    "pid_wellness_profile_tag",
+    "pid_wellness_profile",
+    "pid_emp_status_history",
+    "pid_employment_history",
+    "pid_qualification",
+    "pid_dependent",
+    "pid_emp_contract",
+    "pid_employee",
+    "pid_person_identifier",
+    "pid_person_contact",
+    "pid_person",
   ];
 
   // Truncate in reverse dependency order to avoid FK issues
@@ -191,11 +202,17 @@ export async function truncatePeopleTables(): Promise<void> {
  * Create test tenant if it doesn't exist
  */
 export async function ensureTestTenant(tenantId = 1): Promise<void> {
-  const { sysTenant } = await import('../../core/db/schema/people.js');
-  const existing = await db.select().from(sysTenant).where(sql`${sysTenant.tenId} = ${tenantId}`).limit(1);
-  
+  const { sysTenant } = await import("../../core/db/schema/people.js");
+  const existing = await db
+    .select()
+    .from(sysTenant)
+    .where(sql`${sysTenant.tenId} = ${tenantId}`)
+    .limit(1);
+
   if (existing.length === 0) {
-    await db.insert(sysTenant).values({ tenId: tenantId, tenName: `Test Tenant ${tenantId}` });
+    await db
+      .insert(sysTenant)
+      .values({ tenId: tenantId, tenName: `Test Tenant ${tenantId}` });
   }
 }
 
@@ -212,7 +229,7 @@ export async function cleanupTestDb(): Promise<void> {
  */
 export async function setupTestDb(): Promise<void> {
   // Verify connection
-  await pool.query('SELECT 1');
+  await pool.query("SELECT 1");
   // Ensure test tenant exists
   await ensureTestTenant(1);
 }

@@ -3,9 +3,9 @@
  * Common test utility functions
  */
 
-import { PersonRepository } from '../../modules/people/repositories/person.repository.js';
-import { EmployeeRepository } from '../../modules/people/repositories/employee.repository.js';
-import { TestFactories } from './test-factories.js';
+import { PersonRepository } from "../../modules/people/repositories/person.repository.js";
+import { EmployeeRepository } from "../../modules/people/repositories/employee.repository.js";
+import { TestFactories } from "./test-factories.js";
 
 /**
  * Create a test person and return it
@@ -19,17 +19,25 @@ export async function createTestPerson(overrides = {}) {
 /**
  * Create a test employee and return it
  */
-export async function createTestEmployee(tenantId: number, personId?: number, overrides = {}) {
+export async function createTestEmployee(
+  tenantId: number,
+  personId?: number,
+  overrides = {},
+) {
   const employeeRepo = new EmployeeRepository();
-  const personRepo = new PersonRepository();
-  
+  const _personRepo = new PersonRepository();
+
   let actualPersonId = personId;
   if (!actualPersonId) {
     const person = await createTestPerson();
     actualPersonId = person.perId;
   }
 
-  const employeeData = TestFactories.createEmployee(tenantId, actualPersonId, overrides);
+  const employeeData = TestFactories.createEmployee(
+    tenantId,
+    actualPersonId,
+    overrides,
+  );
   return await employeeRepo.create(employeeData);
 }
 

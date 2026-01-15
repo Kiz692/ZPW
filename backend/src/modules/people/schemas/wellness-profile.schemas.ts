@@ -3,9 +3,9 @@
  * Zod schemas for wellness profile validation
  */
 
-import { z } from 'zod';
+import { z } from "zod";
 
-const channelCodes = z.enum(['EMAIL', 'SMS', 'WHATSAPP', 'APP', 'OTHER']);
+const channelCodes = z.enum(["EMAIL", "SMS", "WHATSAPP", "APP", "OTHER"]);
 
 export const wellnessProfileUpsertSchema = z.object({
   wepTenantId: z.number().int().positive(),
@@ -25,6 +25,12 @@ export const wellnessProfileConsentUpdateSchema = z.object({
   wepConsentFlag: z.boolean(),
 });
 
-export type WellnessProfileUpsertInput = z.infer<typeof wellnessProfileUpsertSchema>;
-export type WellnessProfileUpdateInput = z.infer<typeof wellnessProfileUpdateSchema>;
-export type WellnessProfileConsentUpdateInput = z.infer<typeof wellnessProfileConsentUpdateSchema>;
+export type WellnessProfileUpsertInput = z.infer<
+  typeof wellnessProfileUpsertSchema
+>;
+export type WellnessProfileUpdateInput = z.infer<
+  typeof wellnessProfileUpdateSchema
+>;
+export type WellnessProfileConsentUpdateInput = z.infer<
+  typeof wellnessProfileConsentUpdateSchema
+>;
