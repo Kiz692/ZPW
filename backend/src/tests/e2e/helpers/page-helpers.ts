@@ -3,7 +3,7 @@
  * Common page interaction utilities for E2E tests
  */
 
-import { Page, Locator } from "@playwright/test";
+import { Page } from "@playwright/test";
 
 /**
  * Wait for employee list to load

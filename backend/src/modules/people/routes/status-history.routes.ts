@@ -5,7 +5,6 @@
 
 import type { FastifyInstance } from "fastify";
 import { StatusHistoryService } from "../services/status-history.service.js";
-import { statusHistoryQuerySchema } from "../schemas/status-history.schemas.js";
 import { requireTenant } from "../../../core/auth/tenant.middleware.js";
 
 export async function registerStatusHistoryRoutes(app: FastifyInstance) {

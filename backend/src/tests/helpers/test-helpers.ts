@@ -25,7 +25,7 @@ export async function createTestEmployee(
   overrides = {},
 ) {
   const employeeRepo = new EmployeeRepository();
-  const personRepo = new PersonRepository();
+  const _personRepo = new PersonRepository();
 
   let actualPersonId = personId;
   if (!actualPersonId) {

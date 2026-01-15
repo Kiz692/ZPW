@@ -28,7 +28,21 @@ describe("PersonService", () => {
   describe("create", () => {
     it("should create person with required fields", async () => {
       const personData = TestFactories.createPerson();
-      const person = await personService.create(personData, 1);
+      const person = await personService.create(
+        {
+          perFirstName: personData.perFirstName,
+          perLastName: personData.perLastName,
+          perMiddleName: personData.perMiddleName ?? undefined,
+          perDisplayName: personData.perDisplayName ?? undefined,
+          perGenderCode: personData.perGenderCode ?? undefined,
+          perDateOfBirth:
+            personData.perDateOfBirth instanceof Date
+              ? personData.perDateOfBirth
+              : undefined,
+          perNationalityCode: personData.perNationalityCode ?? undefined,
+        },
+        1,
+      );
 
       expect(person.perId).toBeDefined();
       expect(person.perFirstName).toBe(personData.perFirstName);
@@ -44,8 +58,20 @@ describe("PersonService", () => {
 
   describe("getById", () => {
     it("should get person by ID", async () => {
+      const personData = TestFactories.createPerson();
       const person = await personService.create(
-        TestFactories.createPerson(),
+        {
+          perFirstName: personData.perFirstName,
+          perLastName: personData.perLastName,
+          perMiddleName: personData.perMiddleName ?? undefined,
+          perDisplayName: personData.perDisplayName ?? undefined,
+          perGenderCode: personData.perGenderCode ?? undefined,
+          perDateOfBirth:
+            personData.perDateOfBirth instanceof Date
+              ? personData.perDateOfBirth
+              : undefined,
+          perNationalityCode: personData.perNationalityCode ?? undefined,
+        },
         1,
       );
       const found = await personService.getById(person.perId);
@@ -81,8 +107,20 @@ describe("PersonService", () => {
 
   describe("update", () => {
     it("should update person", async () => {
+      const personData = TestFactories.createPerson();
       const person = await personService.create(
-        TestFactories.createPerson(),
+        {
+          perFirstName: personData.perFirstName,
+          perLastName: personData.perLastName,
+          perMiddleName: personData.perMiddleName ?? undefined,
+          perDisplayName: personData.perDisplayName ?? undefined,
+          perGenderCode: personData.perGenderCode ?? undefined,
+          perDateOfBirth:
+            personData.perDateOfBirth instanceof Date
+              ? personData.perDateOfBirth
+              : undefined,
+          perNationalityCode: personData.perNationalityCode ?? undefined,
+        },
         1,
       );
       const updated = await personService.update(
@@ -97,8 +135,20 @@ describe("PersonService", () => {
 
   describe("delete", () => {
     it("should soft delete person", async () => {
+      const personData = TestFactories.createPerson();
       const person = await personService.create(
-        TestFactories.createPerson(),
+        {
+          perFirstName: personData.perFirstName,
+          perLastName: personData.perLastName,
+          perMiddleName: personData.perMiddleName ?? undefined,
+          perDisplayName: personData.perDisplayName ?? undefined,
+          perGenderCode: personData.perGenderCode ?? undefined,
+          perDateOfBirth:
+            personData.perDateOfBirth instanceof Date
+              ? personData.perDateOfBirth
+              : undefined,
+          perNationalityCode: personData.perNationalityCode ?? undefined,
+        },
         1,
       );
       const deleted = await personService.delete(person.perId, 1);

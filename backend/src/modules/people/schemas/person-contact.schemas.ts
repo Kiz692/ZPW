@@ -14,7 +14,7 @@ const contactTypeCodes = z.enum([
 ]);
 
 const emailSchema = z.string().email();
-const phoneSchema = z.string().regex(/^[\d\s\-\+\(\)]+$/);
+const phoneSchema = z.string().regex(/^[\d\s\-+()]+$/);
 
 export const personContactCreateSchema = z
   .object({

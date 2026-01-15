@@ -53,7 +53,7 @@ export async function registerWellnessProfileRoutes(app: FastifyInstance) {
     },
     async (request, reply) => {
       try {
-        const tenantId = requireTenant(request);
+        const _tenantId = requireTenant(request);
         const userId = requireUser(request);
         const validatedBody = wellnessProfileUpsertSchema.parse(request.body);
         const profile = await wellnessProfileService.upsert(

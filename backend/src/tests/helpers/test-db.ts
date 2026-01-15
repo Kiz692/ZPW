@@ -14,12 +14,12 @@ import { sql } from "drizzle-orm";
  * Demo seed data identifiers - these should NOT be deleted during test cleanup
  */
 const DEMO_EMPLOYEE_NUMBERS = ["EMP001", "EMP002", "EMP003"];
-const DEMO_TENANT_NAME = "Demo Company";
+const _DEMO_TENANT_NAME = "Demo Company";
 
 /**
  * Check if an employee number is from demo seed data
  */
-function isDemoEmployeeNumber(empNumber: string): boolean {
+function _isDemoEmployeeNumber(empNumber: string): boolean {
   return DEMO_EMPLOYEE_NUMBERS.includes(empNumber);
 }
 
@@ -41,7 +41,7 @@ export async function cleanupTestData(): Promise<void> {
     pidWellnessProfile,
     pidWellnessProfileTag,
   } = await import("../../core/db/schema/people.js");
-  const { eq, notInArray, inArray } = await import("drizzle-orm");
+  const { eq: _eq, notInArray, inArray } = await import("drizzle-orm");
 
   // Get demo employee IDs first
   const demoEmployees = await db

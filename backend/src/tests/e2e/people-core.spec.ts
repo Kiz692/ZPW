@@ -141,7 +141,10 @@ test.describe("People Core E2E Tests", () => {
     expect(pageContent).toBeTruthy();
   });
 
-  test("should verify tenant isolation in UI", async ({ page, request }) => {
+  test("should verify tenant isolation in UI", async ({
+    page: _page,
+    request,
+  }) => {
     // Create employee in tenant 1
     const personResponse = await request.post(
       `${API_BASE_URL}/api/v1/people/persons`,

@@ -7,11 +7,9 @@ import type { FastifyInstance } from "fastify";
 import { PersonService } from "../services/person.service.js";
 import {
   personCreateSchema,
-  personUpdateSchema,
   personQuerySchema,
 } from "../schemas/person.schemas.js";
 import { requireUser } from "../../../core/auth/auth.middleware.js";
-import { requireTenant } from "../../../core/auth/tenant.middleware.js";
 
 export async function registerPersonRoutes(app: FastifyInstance) {
   const personService = new PersonService();

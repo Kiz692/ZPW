@@ -149,7 +149,7 @@ export class PersonContactService extends BaseService {
       }
     } else if (type === "MOBILE" || type === "PHONE") {
       // Basic phone validation - can be enhanced
-      if (!/^[\d\s\-\+\(\)]+$/.test(value)) {
+      if (!/^[\d\s\-+()]+$/.test(value)) {
         throw new Error("Invalid phone format");
       }
     }

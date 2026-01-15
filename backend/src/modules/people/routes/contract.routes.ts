@@ -5,10 +5,7 @@
 
 import type { FastifyInstance } from "fastify";
 import { ContractService } from "../services/contract.service.js";
-import {
-  contractCreateSchema,
-  contractUpdateSchema,
-} from "../schemas/contract.schemas.js";
+import { contractUpdateSchema } from "../schemas/contract.schemas.js";
 import { requireTenant } from "../../../core/auth/tenant.middleware.js";
 import { requireUser } from "../../../core/auth/auth.middleware.js";
 
