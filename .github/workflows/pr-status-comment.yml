@@ -1,0 +1,238 @@
+name: PR Status Comment
+
+on:
+  workflow_run:
+    workflows: ["CI Pipeline"]
+    types:
+      - completed
+  check_run:
+    types: [completed]
+
+jobs:
+  comment-pr-status:
+    name: Comment PR Status
+    runs-on: ubuntu-latest
+    if: github.event.workflow_run.event == 'pull_request' || (github.event.check_run != null && github.event.check_run.pull_requests != null && github.event.check_run.pull_requests.length > 0)
+    
+    steps:
+      - name: Get PR number
+        id: pr
+        uses: actions/github-script@v7
+        with:
+          script: |
+            // #region agent log
+            fetch('http://127.0.0.1:7244/ingest/a6ba8bbd-6636-49ba-8c7e-abe17e522351',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'pr-status-comment.yml:Get PR number',message:'Getting PR number from workflow_run',data:{workflowRunEvent:context.payload.workflow_run?.event,checkRunPRs:context.payload.check_run?.pull_requests?.length},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'A'})}).catch(()=>{});
+            // #endregion
+            
+            let prNumber = null;
+            
+            if (context.payload.workflow_run) {
+              // Get PR from workflow_run
+              const workflowRun = context.payload.workflow_run;
+              const prs = workflowRun.pull_requests || [];
+              if (prs.length > 0) {
+                prNumber = prs[0].number;
+              } else {
+                // Try to extract from head branch
+                const headBranch = workflowRun.head_branch;
+                const prsResponse = await github.rest.pulls.list({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  head: `${context.repo.owner}:${headBranch}`,
+                  state: 'open'
+                });
+                if (prsResponse.data.length > 0) {
+                  prNumber = prsResponse.data[0].number;
+                }
+              }
+            } else if (context.payload.check_run) {
+              // Get PR from check_run
+              const checkRun = context.payload.check_run;
+              const prs = checkRun.pull_requests || [];
+              if (prs.length > 0) {
+                prNumber = prs[0].number;
+              }
+            }
+            
+            // #region agent log
+            fetch('http://127.0.0.1:7244/ingest/a6ba8bbd-6636-49ba-8c7e-abe17e522351',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'pr-status-comment.yml:Get PR number',message:'PR number extracted',data:{prNumber},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'A'})}).catch(()=>{});
+            // #endregion
+            
+            if (!prNumber) {
+              core.setFailed('Could not determine PR number');
+              return;
+            }
+            
+            core.setOutput('number', prNumber);
+            return prNumber;
+
+      - name: Get CI check statuses
+        id: checks
+        uses: actions/github-script@v7
+        with:
+          script: |
+            // #region agent log
+            fetch('http://127.0.0.1:7244/ingest/a6ba8bbd-6636-49ba-8c7e-abe17e522351',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'pr-status-comment.yml:Get CI checks',message:'Fetching CI check statuses',data:{prNumber:${{ steps.pr.outputs.number }},sha:context.payload.workflow_run?.head_sha || context.sha},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'B'})}).catch(()=>{});
+            // #endregion
+            
+            const prNumber = ${{ steps.pr.outputs.number }};
+            const sha = context.payload.workflow_run?.head_sha || context.sha;
+            
+            // Get all check runs for this commit
+            const checksResponse = await github.rest.checks.listForRef({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              ref: sha
+            });
+            
+            const checkRuns = checksResponse.data.check_runs || [];
+            
+            // #region agent log
+            fetch('http://127.0.0.1:7244/ingest/a6ba8bbd-6636-49ba-8c7e-abe17e522351',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'pr-status-comment.yml:Get CI checks',message:'Check runs retrieved',data:{totalChecks:checkRuns.length,checkNames:checkRuns.map(c=>c.name)},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'B'})}).catch(()=>{});
+            // #endregion
+            
+            // Filter CI Pipeline checks
+            const ciChecks = checkRuns.filter(c => 
+              c.name.startsWith('CI Pipeline /') || 
+              c.name === 'Lint' || 
+              c.name === 'Type Check' || 
+              c.name === 'Unit Tests' || 
+              c.name === 'Integration Tests' || 
+              c.name === 'Migration Check' || 
+              c.name === 'Auth Guard Check'
+            );
+            
+            // Map to status
+            const statusMap = {
+              'Lint': ciChecks.find(c => c.name.includes('Lint'))?.conclusion || 'pending',
+              'Type Check': ciChecks.find(c => c.name.includes('Type Check'))?.conclusion || 'pending',
+              'Unit Tests': ciChecks.find(c => c.name.includes('Unit Tests'))?.conclusion || 'pending',
+              'Integration Tests': ciChecks.find(c => c.name.includes('Integration Tests'))?.conclusion || 'pending',
+              'Migration Check': ciChecks.find(c => c.name.includes('Migration Check'))?.conclusion || 'pending',
+              'Auth Guard Check': ciChecks.find(c => c.name.includes('Auth Guard Check'))?.conclusion || 'pending'
+            };
+            
+            // #region agent log
+            fetch('http://127.0.0.1:7244/ingest/a6ba8bbd-6636-49ba-8c7e-abe17e522351',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'pr-status-comment.yml:Get CI checks',message:'Status map created',data:statusMap,timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'B'})}).catch(()=>{});
+            // #endregion
+            
+            core.setOutput('statuses', JSON.stringify(statusMap));
+            return statusMap;
+
+      - name: Generate status comment
+        id: comment
+        uses: actions/github-script@v7
+        with:
+          script: |
+            // #region agent log
+            fetch('http://127.0.0.1:7244/ingest/a6ba8bbd-6636-49ba-8c7e-abe17e522351',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'pr-status-comment.yml:Generate comment',message:'Generating status comment',data:{hasStatuses:!!'${{ steps.checks.outputs.statuses }}'},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'C'})}).catch(()=>{});
+            // #endregion
+            
+            const statuses = JSON.parse('${{ steps.checks.outputs.statuses }}');
+            
+            const getStatusIcon = (status) => {
+              if (status === 'success') return '✅';
+              if (status === 'failure') return '❌';
+              if (status === 'cancelled') return '⚠️';
+              return '⏳';
+            };
+            
+            const getStatusText = (status) => {
+              if (status === 'success') return 'PASSED';
+              if (status === 'failure') return 'FAILED';
+              if (status === 'cancelled') return 'CANCELLED';
+              return 'PENDING';
+            };
+            
+            let comment = '## 🔍 CI Pipeline Status\n\n';
+            comment += 'Automated status update from CI Pipeline:\n\n';
+            comment += '| Check | Status |\n';
+            comment += '|-------|--------|\n';
+            
+            for (const [checkName, status] of Object.entries(statuses)) {
+              const icon = getStatusIcon(status);
+              const text = getStatusText(status);
+              comment += `| ${checkName} | ${icon} ${text} |\n`;
+            }
+            
+            comment += '\n---\n';
+            comment += '*This comment is automatically updated by the CI Pipeline.*\n';
+            
+            // #region agent log
+            fetch('http://127.0.0.1:7244/ingest/a6ba8bbd-6636-49ba-8c7e-abe17e522351',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'pr-status-comment.yml:Generate comment',message:'Comment generated',data:{commentLength:comment.length},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'C'})}).catch(()=>{});
+            // #endregion
+            
+            core.setOutput('body', comment);
+            return comment;
+
+      - name: Find existing comment
+        id: find-comment
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const prNumber = ${{ steps.pr.outputs.number }};
+            
+            // #region agent log
+            fetch('http://127.0.0.1:7244/ingest/a6ba8bbd-6636-49ba-8c7e-abe17e522351',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'pr-status-comment.yml:Find comment',message:'Searching for existing comment',data:{prNumber},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'D'})}).catch(()=>{});
+            // #endregion
+            
+            const comments = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: prNumber
+            });
+            
+            const botComment = comments.data.find(c => 
+              c.user.type === 'Bot' && 
+              c.body.includes('🔍 CI Pipeline Status')
+            );
+            
+            // #region agent log
+            fetch('http://127.0.0.1:7244/ingest/a6ba8bbd-6636-49ba-8c7e-abe17e522351',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'pr-status-comment.yml:Find comment',message:'Existing comment found',data:{found:!!botComment,commentId:botComment?.id},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'D'})}).catch(()=>{});
+            // #endregion
+            
+            if (botComment) {
+              core.setOutput('id', botComment.id);
+              core.setOutput('exists', 'true');
+            } else {
+              core.setOutput('exists', 'false');
+            }
+
+      - name: Create or update comment
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const prNumber = ${{ steps.pr.outputs.number }};
+            const commentBody = `${{ steps.comment.outputs.body }}`;
+            const commentExists = '${{ steps.find-comment.outputs.exists }}' === 'true';
+            const commentId = ${{ steps.find-comment.outputs.id }};
+            
+            // #region agent log
+            fetch('http://127.0.0.1:7244/ingest/a6ba8bbd-6636-49ba-8c7e-abe17e522351',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'pr-status-comment.yml:Create/Update',message:'Creating or updating comment',data:{prNumber,commentExists,commentId,bodyLength:commentBody.length},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'E'})}).catch(()=>{});
+            // #endregion
+            
+            if (commentExists && commentId) {
+              // Update existing comment
+              await github.rest.issues.updateComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: commentId,
+                body: commentBody
+              });
+              
+              // #region agent log
+              fetch('http://127.0.0.1:7244/ingest/a6ba8bbd-6636-49ba-8c7e-abe17e522351',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'pr-status-comment.yml:Create/Update',message:'Comment updated',data:{commentId},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'E'})}).catch(()=>{});
+              // #endregion
+            } else {
+              // Create new comment
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: prNumber,
+                body: commentBody
+              });
+              
+              // #region agent log
+              fetch('http://127.0.0.1:7244/ingest/a6ba8bbd-6636-49ba-8c7e-abe17e522351',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'pr-status-comment.yml:Create/Update',message:'Comment created',data:{prNumber},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'E'})}).catch(()=>{});
+              // #endregion
+            }
