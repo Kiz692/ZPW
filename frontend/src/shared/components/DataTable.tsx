@@ -19,7 +19,7 @@ interface DataTableProps<T> {
   emptyMessage?: string;
 }
 
-export function DataTable<T extends Record<string, unknown>>({
+export function DataTable<T = Record<string, unknown>>({
   columns,
   data,
   isLoading = false,
@@ -65,7 +65,7 @@ export function DataTable<T extends Record<string, unknown>>({
                     ? column.cell(row)
                     : column.accessor
                       ? column.accessor(row)
-                      : (row[column.key] as ReactNode)}
+                      : ((row as Record<string, unknown>)[column.key] as ReactNode)}
                 </td>
               ))}
             </tr>

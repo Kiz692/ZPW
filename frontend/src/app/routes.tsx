@@ -17,6 +17,8 @@ const LeaveModule = lazy(() => import('@/features/leave/LeaveModule'));
 const PerformanceModule = lazy(() => import('@/features/performance/PerformanceModule'));
 const GamificationModule = lazy(() => import('@/features/gamification/GamificationModule'));
 const AIModule = lazy(() => import('@/features/ai/AIModule'));
+const ESSModule = lazy(() => import('@/features/ess/ESSModule'));
+const MSSModule = lazy(() => import('@/features/mss/MSSModule'));
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { isAuthenticated, isLoading } = useAuth();

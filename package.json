@@ -11,6 +11,24 @@
     "build": "cd backend && npm run build"
   },
   "devDependencies": {
+    "@playwright/test": "^1.57.0",
+    "@types/node": "^25.0.8",
     "npm-run-all": "^4.1.5"
-  }
+  },
+  "version": "1.0.0",
+  "description": "**Wellness-focused HRMS for SMEs** - A multi-tenant SaaS platform that embeds wellness and health engagement into everyday employee journeys.",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Kiz692/ZPW.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Kiz692/ZPW/issues"
+  },
+  "homepage": "https://github.com/Kiz692/ZPW#readme"
 }

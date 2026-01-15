@@ -3,8 +3,6 @@
  * Centralized HTTP client with authentication and error handling
  */
 
-import { API_ENDPOINTS } from './api-endpoints';
-
 export interface ApiError {
   message: string;
   status: number;
@@ -31,7 +29,7 @@ class ApiClient {
   private baseURL: string;
 
   constructor() {
-    this.baseURL = import.meta.env.VITE_API_BASE_URL || '';
+    this.baseURL = (import.meta.env?.VITE_API_BASE_URL as string) || '';
   }
 
   private async getAuthToken(): Promise<string | null> {
@@ -51,9 +49,9 @@ class ApiClient {
     const { skipAuth = false, ...fetchOptions } = options;
 
     const url = `${this.baseURL}${endpoint}`;
-    const headers: HeadersInit = {
+    const headers: Record<string, string> = {
       'Content-Type': 'application/json',
-      ...fetchOptions.headers,
+      ...(fetchOptions.headers as Record<string, string>),
     };
 
     // Add auth token if available
